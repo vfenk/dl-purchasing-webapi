@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danliris/dl-core-webapi.git"
+    "url": "git+https://github.com/danliris/dl-purchasing-webapi.git"
   },
   "author": "Moonlay",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danliris/dl-core-webapi/issues"
+    "url": "https://github.com/danliris/dl-purchasing-webapi/issues"
   },
-"homepage": "https://github.com/danliris/dl-core-webapi#readme",
+"homepage": "https://github.com/danliris/dl-purchasing-webapi#readme",
   "dependencies": {
     "assert": "^1.4.1",
     "dl-module": "git+https://github.com/danliris/dl-module.git#dev",
