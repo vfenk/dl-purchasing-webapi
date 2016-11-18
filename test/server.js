@@ -25,7 +25,7 @@ module.exports = new Promise((resolve, reject) => {
             next();
         });
 
-        var v1PurchaseOrderExternalPostRouter = require('./src/routers/v1/purchasing/purchase-order-external-post-router');
+        var v1PurchaseOrderExternalPostRouter = require('./src/routers/v1/purchase-order-external/purchase-order-external-post-router');
         v1PurchaseOrderExternalPostRouter.applyRoutes(server, "/v1/purchasing/po/externals/post");
 
         var v1PurchaseOrderExternalsUnpostedRouter = require('./src/routers/v1/purchasing/purchase-order-external-posted-router');
