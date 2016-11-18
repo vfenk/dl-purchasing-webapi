@@ -76,7 +76,7 @@ v1PurchaseRequestRouter.applyRoutes(server,                     "/v1/purchase-re
 // DELIVERY ORDER
 var v1DOMonitoringByUserRouter = require('./src/routers/v1/delivery-order/delivery-order-monitoring-by-user-router');
 var v1POMonitoringRouter = require('./src/routers/v1/delivery-order/delivery-order-monitoring-router');
-var v1DeliveryOrderBySupplierRouter = require('./src/routers/v1/deliver-order/delivery-order-by-supplier-router');
+var v1DeliveryOrderBySupplierRouter = require('./src/routers/v1/delivery-order/delivery-order-by-supplier-router');
 var v1DeliveryOrderByUserRouter = require('./src/routers/v1/delivery-order/delivery-order-by-user-router');
 var v1DeliveryOrderRouter = require('./src/routers/v1/delivery-order/delivery-order-router');
 
