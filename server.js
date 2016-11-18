@@ -113,8 +113,8 @@ var v1UnitPaymentOrder = require('./src/routers/v1/unit-payment-note/unit-paymen
 v1UnitPaymentPriceCorrectionNoteByUser.applyRoutes(server,      "/v1/unit-payment-orders/corrections/prices/by-user");  
 v1UnitPaymentPriceCorrectionReturNote.applyRoutes(server,       "/v1/unit-payment-orders/corrections/prices/retur"); 
 v1UnitPaymentPriceCorrectionNote.applyRoutes(server,            "/v1/unit-payment-orders/corrections/prices");
-v1UnitPaymentOrderByUser.applyRoutes(server,                    "/v1/unit-payment-orders/unit/by-user");
-v1UnitPaymentOrder.applyRoutes(server,                          "/v1/unit-payment-orders/unit");
+v1UnitPaymentOrderByUser.applyRoutes(server,                    "/v1/unit-payment-orders/by-user");
+v1UnitPaymentOrder.applyRoutes(server,                          "/v1/unit-payment-orders");
 
 server.listen(process.env.PORT, process.env.IP);
 console.log(`server created at ${process.env.IP}:${process.env.PORT}`)
