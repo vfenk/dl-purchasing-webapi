@@ -70,10 +70,10 @@ router.get('/', passport, (request, response, next) => {
                                     "Tanggal PPH": fulfillment.pphDate ? moment(new Date(fulfillment.pphDate)).format(dateFormat) : "-",
                                     "No PPH": fulfillment.pphNo ? fulfillment.pphNo : "-",
                                     "Nilai PPH": fulfillment.pphValue ? fulfillment.pphValue : 0,
-                                    "Tanggal Koreksi": fulfillment.priceCorrectionDate ? moment(new Date(fulfillment.priceCorrectionDate)).format(dateFormat) : "-",
-                                    "No Koreksi": fulfillment.priceCorrectionNo ? fulfillment.priceCorrectionNo : "-",
-                                    "Nilai Koreksi": fulfillment.priceCorrectionPriceTotal ? fulfillment.priceCorrectionPriceTotal : 0,
-                                    "Ket. Koreksi": fulfillment.priceCorrectionRemark ? fulfillment.priceCorrectionRemark : "-",
+                                    "Tanggal Koreksi": fulfillment.correctionDate ? moment(new Date(fulfillment.correctionDate)).format(dateFormat) : "-",
+                                    "No Koreksi": fulfillment.correctionNo ? fulfillment.correctionNo : "-",
+                                    "Nilai Koreksi": fulfillment.correctionPriceTotal ? fulfillment.correctionPriceTotal : 0,
+                                    "Ket. Koreksi": fulfillment.correctionRemark ? fulfillment.correctionRemark : "-",
                                     "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
                                 }
                                 data.push(_item);
