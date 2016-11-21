@@ -62,13 +62,13 @@ v1PurchaseOrderRouter.applyRoutes(server,                       "/v1/purchase-od
 var v1PurchaseRequestPostedRouter = require('./src/routers/v1/purchase-request/purchase-request-posted-router');
 var v1PurchaseRequestPostRouter = require('./src/routers/v1/purchase-request/purchase-request-post-router');
 var v1PurchaseRequestByUserRouter = require('./src/routers/v1/purchase-request/purchase-request-by-user-router');
-var v1PurchaseRequestRouter = require('./src/routers/v1/purchase-request/purchase-request-monitoring-router');
+var v1PurchaseRequestMonitoringRouter = require('./src/routers/v1/purchase-request/purchase-request-monitoring-router');
 var v1PurchaseRequestRouter = require('./src/routers/v1/purchase-request/purchase-request-router');
 
 v1PurchaseRequestPostedRouter.applyRoutes(server,               "/v1/purchase-requests/posted");
 v1PurchaseRequestPostRouter.applyRoutes(server,                 "/v1/purchase-requests/post");
 v1PurchaseRequestByUserRouter.applyRoutes(server,               "/v1/purchase-requests/by-user");
-v1PurchaseRequestRouter.applyRoutes(server,                     "/v1/purchase-requests/monitoring");
+v1PurchaseRequestMonitoringRouter.applyRoutes(server,           "/v1/purchase-requests/monitoring");
 v1PurchaseRequestRouter.applyRoutes(server,                     "/v1/purchase-requests");
 
 
