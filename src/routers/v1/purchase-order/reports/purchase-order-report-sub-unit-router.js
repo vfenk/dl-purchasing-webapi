@@ -66,10 +66,10 @@ router.get("/", passport, function(request, response, next) {
                          }
                         if(sdate!="undefined" && edate!="undefined")
                         {
-                            response.xls(`Laporan Total Pembelian Per Sub Unit ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
+                            response.xls(`Laporan Total Pembelian Per Unit ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
                         }
                         else
-                        response.xls(`Laporan Total Pembelian Per Sub Unit.xlsx`, data,options);
+                        response.xls(`Laporan Total Pembelian Per Unit.xlsx`, data,options);
                         
                 }
             }).catch(e => {
