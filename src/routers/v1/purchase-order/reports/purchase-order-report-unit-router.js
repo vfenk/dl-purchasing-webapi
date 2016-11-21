@@ -37,7 +37,7 @@ router.get("/", passport, function(request, response, next) {
                             var amount= x1 + '.' + x[1];
                             var item={
                                 "No": index,
-                                "Unit":purchaseOrder._id,
+                                "Divisi":purchaseOrder._id,
                                 "Rp"    : amount,
                                 "%":((purchaseOrder.pricetotal/PriceTotals)*100).toFixed(2)
                             }
@@ -64,10 +64,10 @@ router.get("/", passport, function(request, response, next) {
                          }
                         if(sdate!="undefined" && edate!="undefined")
                         {
-                            response.xls(`Laporan Total Pembelian Per Unit ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
+                            response.xls(`Laporan Total Pembelian Per Divisi ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
                         }
                         else
-                        response.xls(`Laporan Total Pembelian Per Unit.xlsx`, data,options);
+                        response.xls(`Laporan Total Pembelian Per Divisi.xlsx`, data,options);
                         
                     }
             })
