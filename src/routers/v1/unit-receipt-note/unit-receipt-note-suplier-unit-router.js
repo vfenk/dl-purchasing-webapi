@@ -25,7 +25,7 @@ router.get("/", passport, (request, response, next) => {
                     "purchaseOrder.paymentMethod": query.filter.paymentMethod,
                     "purchaseOrder.currency.code": query.filter.currencyCode,
                     "purchaseOrder.vatRate": query.filter.vatRate || 0,
-                    "purchaseOrder.useIncomeTax": query.filter.useIncomeTax
+                    "purchaseOrder.useIncomeTax": query.filter.useIncomeTax || false
                 }
 
             }
