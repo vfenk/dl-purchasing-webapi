@@ -35,6 +35,27 @@ router.get('/', passport, (request, response, next) => {
                         if (item.fulfillments.length > 0) {
                             for (var fulfillment of item.fulfillments) {
                                 index++;
+
+                                var _correctionNo = "-";
+                                var _correctionPriceTotal = "0";
+                                var _correctionDate = "-";
+                                var _correctionRemark = "-";
+
+                                if (fulfillment.correction) {
+                                    var i = 1;
+                                    _correctionNo = "";
+                                    _correctionPriceTotal = "";
+                                    _correctionDate = "";
+                                    _correctionRemark = "";
+                                    for (var correction of fulfillment.correction) {
+                                        _correctionNo = `${_correctionNo}${i}. ${correction.correctionNo}\n`;
+                                        _correctionPriceTotal = `${_correctionPriceTotal}${i}. ${correction.correctionPriceTotal.toLocaleString()}\n`;
+                                        _correctionDate = `${_correctionDate}${i}. ${moment(new Date(correction.correctionDate)).format(dateFormat)}\n`;
+                                        _correctionRemark = `${_correctionRemark}${i}. ${correction.correctionRemark}\n`;
+                                        i++;
+                                    }
+                                }
+
                                 var _item = {
                                     "No": index,
                                     "Tanggal Purchase Request": moment(new Date(PO.purchaseRequest.date)).format(dateFormat),
@@ -70,10 +91,10 @@ router.get('/', passport, (request, response, next) => {
                                     "Tanggal PPH": fulfillment.pphDate ? moment(new Date(fulfillment.pphDate)).format(dateFormat) : "-",
                                     "No PPH": fulfillment.pphNo ? fulfillment.pphNo : "-",
                                     "Nilai PPH": fulfillment.pphValue ? fulfillment.pphValue : 0,
-                                    "Tanggal Koreksi": fulfillment.correctionDate ? moment(new Date(fulfillment.correctionDate)).format(dateFormat) : "-",
-                                    "No Koreksi": fulfillment.correctionNo ? fulfillment.correctionNo : "-",
-                                    "Nilai Koreksi": fulfillment.correctionPriceTotal ? fulfillment.correctionPriceTotal : 0,
-                                    "Ket. Koreksi": fulfillment.correctionRemark ? fulfillment.correctionRemark : "-",
+                                    "Tanggal Koreksi": _correctionDate || "-",
+                                    "No Koreksi": _correctionNo || "-",
+                                    "Nilai Koreksi": _correctionPriceTotal || 0,
+                                    "Ket. Koreksi": _correctionRemark || "-",
                                     "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
                                 }
                                 data.push(_item);
@@ -165,7 +186,7 @@ router.get('/', passport, (request, response, next) => {
                         "Nilai PPN": "number",
                         "Tanggal PPH": "string",
                         "No PPH": "string",
-                        "Nilai PPH": "number",
+                        "Nilai PPH": "string",
                         "Keterangan": "string"
                     };
 
