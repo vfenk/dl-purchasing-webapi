@@ -32,17 +32,13 @@ router.get('/', passport, (request, response, next) => {
                 for (var unitReceiptNote of docs) {
                     for (var item of unitReceiptNote.items) {
                         var sisa = 0;
-                        for (var doItem of unitReceiptNote.deliveryOrder.items) {
-                            if (doItem.purchaseOrderExternal._id.toString() == item.purchaseOrder.purchaseOrderExternal._id.toString()) {
-                                for (var fulfillment of doItem.fulfillments) {
-                                    if (item.product._id.toString() == fulfillment.product._id.toString()) {
-                                        for (var qty of fulfillment.realizationQuantity) {
-                                            sisa += qty.deliveredQuantity;
-                                            if (qty.no == unitReceiptNote.no)
-                                                break;
-                                        }
+                        
+                        for (var poItem of item.purchaseOrder.items) {
+                            if (poItem.product._id.toString() == item.product._id.toString()) {
+                                for (var fulfillment of poItem.fulfillments) {
+                                    sisa += fulfillment.unitReceiptNoteDeliveredQuantity;
+                                    if (fulfillment.unitReceiptNoteNo == unitReceiptNote.no)
                                         break;
-                                    }
                                 }
                                 break;
                             }
