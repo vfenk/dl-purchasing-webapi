@@ -24,8 +24,8 @@ router.get("/", passport, (request, response, next) => {
                     "purchaseOrder.categoryId": new ObjectId(query.filter.categoryId),
                     "purchaseOrder.paymentMethod": query.filter.paymentMethod,
                     "purchaseOrder.currency.code": query.filter.currencyCode,
-                    "purchaseOrder.vatRate": query.filter.vatRate,
-                    "purchaseOrder.useIncomeTax": query.filter.useIncomeTax
+                    "purchaseOrder.vatRate": query.filter.vatRate || 0,
+                    "purchaseOrder.useIncomeTax": query.filter.useIncomeTax || false
                 }
 
             }
