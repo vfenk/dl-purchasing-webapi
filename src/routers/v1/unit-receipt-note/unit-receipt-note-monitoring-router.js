@@ -27,41 +27,42 @@ router.get('/', passport, (request, response, next) => {
                     
                     var data = [];
                     var index = 0;
+                    
                     for (var unitReceiptNote of docs) {
-                        for (var item of unitReceiptNote.items) {
-                            var sisa = 0;
-                            for(var poItem of item.purchaseOrder.items){
-                                var productIdPoItem = new ObjectId(poItem.product._id);
-                                var productIdUnitReceiptNoteItem = new ObjectId(item.product._id);
-                                if (productIdPoItem.equals(productIdUnitReceiptNoteItem)) {
-                                    for (var poItemFulfillment of poItem.fulfillments) {
-                                        var qty = poItemFulfillment.unitReceiptNoteDeliveredQuantity || 0;
-                                        sisa += qty;
-                                    }
-                                    break;
+                    for (var item of unitReceiptNote.items) {
+                        var sisa = 0;
+                        
+                        for (var poItem of item.purchaseOrder.items) {
+                            if (poItem.product._id.toString() == item.product._id.toString()) {
+                                for (var fulfillment of poItem.fulfillments) {
+                                    sisa += fulfillment.unitReceiptNoteDeliveredQuantity;
+                                    if (fulfillment.unitReceiptNoteNo == unitReceiptNote.no)
+                                        break;
                                 }
+                                break;
                             }
-                            
-                            index++;
-                            var _item = {
-                                "No": index,
-                                "Unit": `${item.purchaseOrder.unit.division} - ${item.purchaseOrder.unit.subDivision}`,
-                                "Kategori": item.purchaseOrder.category.name,
-                                "No PO Internal": item.purchaseOrder.refNo || "-",
-                                "Nama Barang": item.product.name,
-                                "Kode Barang": item.product.code,
-                                "Supplier": unitReceiptNote.supplier.name,
-                                "Tanggal Bon Terima Unit": moment(new Date(unitReceiptNote.date)).format(dateFormat),
-                                "No Bon Terima Unit": unitReceiptNote.no,
-                                "Jumlah Diminta": item.purchaseOrderQuantity,
-                                "Satuan Diminta": item.deliveredUom.unit,
-                                "Jumlah Diterima": item.deliveredQuantity,
-                                "Satuan Diterima": item.deliveredUom.unit,
-                                "Jumlah (+/-/0)": (item.purchaseOrderQuantity || 0) - sisa
-                            }
-                            data.push(_item);
                         }
+
+                        index++;
+                        var _item = {
+                            "No": index,
+                            "Unit": `${unitReceiptNote.unit.division.name} - ${unitReceiptNote.unit.name}`,
+                            "Kategori": item.purchaseOrder.category.name,
+                            "No PO Internal": item.purchaseOrder.refNo || "-",
+                            "Nama Barang": item.product.name,
+                            "Kode Barang": item.product.code,
+                            "Supplier": unitReceiptNote.supplier.name,
+                            "Tanggal Bon Terima Unit": moment(new Date(unitReceiptNote.date)).format(dateFormat),
+                            "No Bon Terima Unit": unitReceiptNote.no,
+                            "Jumlah Diminta": item.purchaseOrderQuantity,
+                            "Satuan Diminta": item.deliveredUom.unit,
+                            "Jumlah Diterima": item.deliveredQuantity,
+                            "Satuan Diterima": item.deliveredUom.unit,
+                            "Jumlah (+/-/0)": (item.purchaseOrderQuantity || 0) - sisa
+                        }
+                        data.push(_item);
                     }
+                }
                     
                 if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                     var result = resultFormatter.ok(apiVersion, 200, data);
