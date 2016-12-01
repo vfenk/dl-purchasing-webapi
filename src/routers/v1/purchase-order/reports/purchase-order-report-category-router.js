@@ -64,7 +64,7 @@ router.get("/", passport, function(request, response, next) {
                             "Rp": "number",
                             "%": "number",
                          }
-                        if(sdate!="undefined" && edate!="undefined")
+                        if(sdate!=undefined && edate!=undefined)
                         {
                             response.xls(`Laporan Total Pembelian Per Kategori ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data, options);
                         }
