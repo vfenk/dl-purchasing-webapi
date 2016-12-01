@@ -55,7 +55,7 @@ v1PurchaseOrderByUserRouter.applyRoutes(server,                 "/v1/purchase-od
 v1ReportPoCategoryPeriode.applyRoutes(server,                   "/v1/purchase-oders/reports/categories");
 v1ReportPoUnitPeriode.applyRoutes(server,                       "/v1/purchase-oders/reports/units");
 v1ReportPoSubUnitPeriode.applyRoutes(server,                    "/v1/purchase-oders/reports/subUnits");
-v1ReportPoUnitCategoryPeriode.applyRoutes(server,               "/v1/purchase-oders/reports/unit-category");
+v1ReportPoUnitCategoryPeriode.applyRoutes(server,               "/v1/purchase-oders/reports/units-categories");
 v1PurchaseOrderRouter.applyRoutes(server,                       "/v1/purchase-oders");
 
 
