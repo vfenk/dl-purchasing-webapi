@@ -110,6 +110,7 @@ var v1UnitPaymentPriceCorrectionNoteByUser = require('./src/routers/v1/unit-paym
 var v1UnitPaymentPriceCorrectionReturNote = require('./src/routers/v1/unit-payment-note/unit-payment-price-correction-retur-note-router');
 var v1UnitPaymentPriceCorrectionNote = require('./src/routers/v1/unit-payment-note/unit-payment-price-correction-note-router');
 var v1UnitPaymentQuantityCorrectionNoteByUser = require('./src/routers/v1/unit-payment-note/unit-payment-quantity-correction-note-by-user-router');
+var v1UnitPaymentQuantityCorrectionReturNote = require('./src/routers/v1/unit-payment-note/unit-payment-quantity-correction-retur-note-router');
 var v1UnitPaymentQuantityCorrectionNote = require('./src/routers/v1/unit-payment-note/unit-payment-quantity-correction-note-router');
 var v1UnitPaymentOrderByUser = require('./src/routers/v1/unit-payment-note/unit-payment-order-by-user-router'); 
 var v1UnitPaymentOrder = require('./src/routers/v1/unit-payment-note/unit-payment-order-router');
@@ -119,6 +120,7 @@ v1UnitPaymentPriceCorrectionReturNote.applyRoutes(server,       "/v1/unit-paymen
 v1UnitPaymentPriceCorrectionNote.applyRoutes(server,            "/v1/unit-payment-orders/corrections/prices");
 v1UnitPaymentQuantityCorrectionNoteByUser.applyRoutes(server,   "/v1/unit-payment-orders/corrections/quantities/by-user");  
 v1UnitPaymentQuantityCorrectionNote.applyRoutes(server,         "/v1/unit-payment-orders/corrections/quantities");
+v1UnitPaymentQuantityCorrectionReturNote.applyRoutes(server,    "/v1/unit-payment-orders/corrections/quantities/retur"); 
 v1UnitPaymentOrderByUser.applyRoutes(server,                    "/v1/unit-payment-orders/by-user");
 v1UnitPaymentOrder.applyRoutes(server,                          "/v1/unit-payment-orders");
 
