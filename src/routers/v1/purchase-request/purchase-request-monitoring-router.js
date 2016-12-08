@@ -76,4 +76,4 @@ router.get('/', passport, (request, response, next) => {
     })
 });
 
-module.exports = router
+module.exports = router;
