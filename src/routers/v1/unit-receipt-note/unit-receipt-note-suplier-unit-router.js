@@ -17,7 +17,7 @@ router.get("/", passport, (request, response, next) => {
         var filter = {
             "_deleted": false,
             "supplierId": new ObjectId(query.filter.supplierId),
-            "unit.division._id": query.filter.divisionId,
+            "unit.divisionId": new ObjectId(query.filter.divisionId),
             "items": {
                 $elemMatch:
                 {
