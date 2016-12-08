@@ -32,8 +32,6 @@ router.get('/', passport, (request, response, next) => {
                 var index = 0;
                 for (var PO of docs) {
                     for (var item of PO.items) {
-                        var state = "-";
-
                         if (item.fulfillments.length > 0) {
                             for (var fulfillment of item.fulfillments) {
                                 index++;
@@ -56,14 +54,6 @@ router.get('/', passport, (request, response, next) => {
                                         _correctionRemark = `${_correctionRemark}${i}. ${correction.correctionRemark}\n`;
                                         i++;
                                     }
-                                }
-
-                                if (fulfillment.interNoteNo) {
-                                    state = "PO Eksternal sudah datang sudah ada NI";
-                                } else if (fulfillment.unitReceiptNoteNo) {
-                                    state = "PO Eksternal sudah datang belum ada NI ";
-                                } else if (fulfillment.deliveryOderNo) {
-                                    state = "PO Eksternal belum datang (belum komplit)";
                                 }
 
                                 var _item = {
@@ -105,17 +95,12 @@ router.get('/', passport, (request, response, next) => {
                                     "No Koreksi": _correctionNo || "-",
                                     "Nilai Koreksi": _correctionPriceTotal || 0,
                                     "Ket. Koreksi": _correctionRemark || "-",
-                                    "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
-                                    "Status": state
+                                    "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
                                 }
                                 data.push(_item);
                             }
                         }
                         else {
-                            if (PO.purchaseOrderExternal) {
-                                if(PO.purchaseOrderExternal.no)
-                                {state = "PO Internal belum di order ";}
-                            }
                             index++;
                             var _item = {
                                 "No": index,
@@ -156,8 +141,7 @@ router.get('/', passport, (request, response, next) => {
                                 "No Koreksi": "-",
                                 "Nilai Koreksi": 0,
                                 "Ket. Koreksi": "-",
-                                "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
-                                "Status": state
+                                "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
                             }
                             data.push(_item);
                         }
