@@ -33,7 +33,7 @@ var v1PurchaseOrderExternalRouter = require('./src/routers/v1/purchase-order-ext
 v1PurchaseOrderExternalPostRouter.applyRoutes(server,           "/v1/purchase-oders/externals/post");
 v1PurchaseOrderExternalsUnpostedRouter.applyRoutes(server,      "/v1/purchase-oders/externals/posted"); 
 v1PurchaseOrderExternalByUserRouter.applyRoutes(server,         "/v1/purchase-oders/externals/by-user");
-v1PurchaseOrderExternalRouter.applyRoutes(server,               "/v1/purchase-oders/externals");
+v1PurchaseOrderExternalRouter().applyRoutes(server,               "/v1/purchase-oders/externals");
 
 
 
@@ -56,7 +56,7 @@ v1ReportPoCategoryPeriode.applyRoutes(server,                   "/v1/purchase-od
 v1ReportPoUnitPeriode.applyRoutes(server,                       "/v1/purchase-oders/reports/units");
 v1ReportPoSubUnitPeriode.applyRoutes(server,                    "/v1/purchase-oders/reports/subUnits");
 v1ReportPoUnitCategoryPeriode.applyRoutes(server,               "/v1/purchase-oders/reports/units-categories");
-v1PurchaseOrderRouter.applyRoutes(server,                       "/v1/purchase-oders");
+v1PurchaseOrderRouter().applyRoutes(server,                       "/v1/purchase-oders");
 
 
 
@@ -71,7 +71,7 @@ v1PurchaseRequestPostedRouter.applyRoutes(server,               "/v1/purchase-re
 v1PurchaseRequestPostRouter.applyRoutes(server,                 "/v1/purchase-requests/post");
 v1PurchaseRequestByUserRouter.applyRoutes(server,               "/v1/purchase-requests/by-user");
 v1PurchaseRequestMonitoringRouter.applyRoutes(server,           "/v1/purchase-requests/monitoring");
-v1PurchaseRequestRouter.applyRoutes(server,                     "/v1/purchase-requests");
+v1PurchaseRequestRouter().applyRoutes(server,                     "/v1/purchase-requests");
 
 
 
@@ -86,7 +86,7 @@ v1DOMonitoringByUserRouter.applyRoutes(server,                  '/v1/delivery-or
 v1POMonitoringRouter.applyRoutes(server,                        '/v1/delivery-orders/monitoring');
 v1DeliveryOrderBySupplierRouter.applyRoutes(server,             "/v1/delivery-orders/by-supplier");
 v1DeliveryOrderByUserRouter.applyRoutes(server,                 "/v1/delivery-orders/by-user");
-v1DeliveryOrderRouter.applyRoutes(server,                       "/v1/delivery-orders");
+v1DeliveryOrderRouter().applyRoutes(server,                       "/v1/delivery-orders");
 
 
 
@@ -101,7 +101,7 @@ v1UnitReceiptNoteMonitoringByUser.applyRoutes(server,           "/v1/unit-receip
 v1UnitReceiptNoteMonitoring.applyRoutes(server,                 "/v1/unit-receipt-notes/monitoring");
 v1UnitReceiptNoteByUser.applyRoutes(server,                     "/v1/unit-receipt-notes/by-user");
 v1UnitPaymentOrderSupplier.applyRoutes(server,                  "/v1/unit-receipt-notes/by-suplier-unit");
-v1UnitReceiptNote.applyRoutes(server,                           "/v1/unit-receipt-notes/unit");
+v1UnitReceiptNote().applyRoutes(server,                           "/v1/unit-receipt-notes");
 
 
 
@@ -117,12 +117,12 @@ var v1UnitPaymentOrder = require('./src/routers/v1/unit-payment-note/unit-paymen
 
 v1UnitPaymentPriceCorrectionNoteByUser.applyRoutes(server,      "/v1/unit-payment-orders/corrections/prices/by-user");  
 v1UnitPaymentPriceCorrectionReturNote.applyRoutes(server,       "/v1/unit-payment-orders/corrections/prices/retur"); 
-v1UnitPaymentPriceCorrectionNote.applyRoutes(server,            "/v1/unit-payment-orders/corrections/prices");
+v1UnitPaymentPriceCorrectionNote().applyRoutes(server,            "/v1/unit-payment-orders/corrections/prices");
 v1UnitPaymentQuantityCorrectionNoteByUser.applyRoutes(server,   "/v1/unit-payment-orders/corrections/quantities/by-user");  
-v1UnitPaymentQuantityCorrectionNote.applyRoutes(server,         "/v1/unit-payment-orders/corrections/quantities");
+v1UnitPaymentQuantityCorrectionNote().applyRoutes(server,         "/v1/unit-payment-orders/corrections/quantities");
 v1UnitPaymentQuantityCorrectionReturNote.applyRoutes(server,    "/v1/unit-payment-orders/corrections/quantities/retur"); 
 v1UnitPaymentOrderByUser.applyRoutes(server,                    "/v1/unit-payment-orders/by-user");
-v1UnitPaymentOrder.applyRoutes(server,                          "/v1/unit-payment-orders");
+v1UnitPaymentOrder().applyRoutes(server,                          "/v1/unit-payment-orders");
 
 server.listen(process.env.PORT, process.env.IP);
 console.log(`server created at ${process.env.IP}:${process.env.PORT}`)
