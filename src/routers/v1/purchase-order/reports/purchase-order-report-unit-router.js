@@ -27,8 +27,8 @@ router.get("/", passport, function(request, response, next) {
                         var data = [];
                         var index = 0;
                         var PriceTotals=0;
-                        for (var purchaseOrder of docs) {
-                            PriceTotals +=purchaseOrder.pricetotal;
+                        for (var Po of docs) {
+                            PriceTotals +=Po.pricetotal;
                         }
                         for (var purchaseOrder of docs) {
                             index++;
@@ -54,15 +54,15 @@ router.get("/", passport, function(request, response, next) {
                             "Unit":"Total",
                             "Rp": amounts,
                             "%": TotalPercentage
-                        }
+                        };
                         data.push(totals);
                         var options = {
                             "No": "number",
                             "Unit": "string",
                             "Rp": "number",
                             "%": "number",
-                         }
-                        if(sdate!="undefined" && edate!="undefined")
+                         };
+                        if(sdate!=undefined && edate!=undefined)
                         {
                             response.xls(`Laporan Total Pembelian Per Divisi ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
                         }

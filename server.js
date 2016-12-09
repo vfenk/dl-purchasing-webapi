@@ -45,6 +45,7 @@ var v1PurchaseOrderByUserRouter = require('./src/routers/v1/purchase-order/purch
 var v1ReportPoCategoryPeriode = require('./src/routers/v1/purchase-order/reports/purchase-order-report-category-router');
 var v1ReportPoUnitPeriode = require('./src/routers/v1/purchase-order/reports/purchase-order-report-unit-router');
 var v1ReportPoSubUnitPeriode = require('./src/routers/v1/purchase-order/reports/purchase-order-report-sub-unit-router');
+var v1ReportPoUnitCategoryPeriode = require('./src/routers/v1/purchase-order/reports/purchase-order-report-unit-category-router');
 var v1PurchaseOrderRouter = require('./src/routers/v1/purchase-order/purchase-order-router');
 
 v1PurchaseOrderSplitRouter.applyRoutes(server,                  "/v1/purchase-oders/split");
@@ -54,6 +55,7 @@ v1PurchaseOrderByUserRouter.applyRoutes(server,                 "/v1/purchase-od
 v1ReportPoCategoryPeriode.applyRoutes(server,                   "/v1/purchase-oders/reports/categories");
 v1ReportPoUnitPeriode.applyRoutes(server,                       "/v1/purchase-oders/reports/units");
 v1ReportPoSubUnitPeriode.applyRoutes(server,                    "/v1/purchase-oders/reports/subUnits");
+v1ReportPoUnitCategoryPeriode.applyRoutes(server,               "/v1/purchase-oders/reports/units-categories");
 v1PurchaseOrderRouter().applyRoutes(server,                       "/v1/purchase-oders");
 
 
