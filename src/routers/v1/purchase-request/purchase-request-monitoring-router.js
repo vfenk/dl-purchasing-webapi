@@ -14,7 +14,7 @@ router.get('/', passport, (request, response, next) => {
         var PRNo = request.params.PRNo;
         var unitId = request.params.unitId;
         var categoryId = request.params.categoryId;
-        var budgetId = request.params.budget;
+        var budgetId = request.params.budgetId;
         var dateFrom = request.params.dateFrom;
         var dateTo = request.params.dateTo;
 
@@ -76,5 +76,4 @@ router.get('/', passport, (request, response, next) => {
     })
 });
 
-module.exports = router
-
+module.exports = router;

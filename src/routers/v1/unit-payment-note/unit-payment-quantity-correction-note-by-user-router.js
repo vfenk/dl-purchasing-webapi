@@ -82,7 +82,11 @@ router.get('/:id', passport, (request, response, next) => {
         else {
             var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
             var id = request.params.id;
-            manager.getSingleById(id)
+            var query={
+                "_createdBy": request.user.username,
+                "_id": new ObjectId(id)
+            };
+            manager.singleOrDefault(query)
                 .then(doc => {
                     var result = resultFormatter.ok(apiVersion, 200, doc);
                     response.send(200, result);

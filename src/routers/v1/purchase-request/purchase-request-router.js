@@ -12,7 +12,6 @@ var handlePdfRequest = function(request, response, next) {
             var id = request.params.id;
             manager.pdf(id)
                 .then(docBinary => {
-                    // var base64 = 'data:application/pdf;base64,' + docBinary.toString('base64')
                     manager.getSingleById(id)
                         .then(doc => {
                             response.writeHead(200, {
@@ -43,7 +42,8 @@ function getRouter() {
         version: apiVersion,
         defaultOrder: {
             "_updatedDate": -1
-        }
+        },
+        defaultSelect:["unit.division.name","unit.name", "category.name", "date", "no", "expectedDeliveryDate", "_createdBy", "isPosted"]
     });
 
     var route = router.routes["get"].find(route => route.options.path === "/:id");
@@ -52,7 +52,6 @@ function getRouter() {
             next();
         }
         else {
-            var user = request.user;
             var id = request.params.id;
             db.get()
                 .then(db => {

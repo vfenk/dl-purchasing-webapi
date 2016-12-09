@@ -53,7 +53,6 @@ var handlePdfRequest = function (request, response, next) {
         moment.locale(locale);
         manager.pdf(id)
             .then(docBinary => {
-                // var base64 = 'data:application/pdf;base64,' + docBinary.toString('base64')
                 manager.getSingleById(id)
                     .then(doc => {
                         response.writeHead(200, {

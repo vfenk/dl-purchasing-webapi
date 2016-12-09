@@ -3,6 +3,7 @@ var router = new Router();
 var db = require("../../../db");
 var UnitPaymentPriceCorrectionNoteManager = require("dl-module").managers.purchasing.UnitPaymentPriceCorrectionNoteManager;
 var resultFormatter = require("../../../result-formatter");
+var ObjectId = require("mongodb").ObjectId;
 const apiVersion = '1.0.0';
 var passport = require('../../../passports/jwt-passport');
 
@@ -82,7 +83,11 @@ router.get('/:id', passport, (request, response, next) => {
         else {
             var manager = new UnitPaymentPriceCorrectionNoteManager(db, request.user);
             var id = request.params.id;
-            manager.getSingleById(id)
+            var query={
+                "_createdBy": request.user.username,
+                "_id": new ObjectId(id)
+            };
+            manager.singleOrDefault(query)
                 .then(doc => {
                     var result = resultFormatter.ok(apiVersion, 200, doc);
                     response.send(200, result);
