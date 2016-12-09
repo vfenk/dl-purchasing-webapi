@@ -99,7 +99,7 @@ v1UnitReceiptNoteMonitoringByUser.applyRoutes(server,           "/v1/unit-receip
 v1UnitReceiptNoteMonitoring.applyRoutes(server,                 "/v1/unit-receipt-notes/monitoring");
 v1UnitReceiptNoteByUser.applyRoutes(server,                     "/v1/unit-receipt-notes/by-user");
 v1UnitPaymentOrderSupplier.applyRoutes(server,                  "/v1/unit-receipt-notes/by-suplier-unit");
-v1UnitReceiptNote().applyRoutes(server,                           "/v1/unit-receipt-notes/unit");
+v1UnitReceiptNote().applyRoutes(server,                           "/v1/unit-receipt-notes");
 
 
 
