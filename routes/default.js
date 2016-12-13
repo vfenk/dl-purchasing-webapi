@@ -48,19 +48,19 @@ var v1UnitPaymentOrder = require('../src/routers/v1/unit-payment-note/unit-payme
     v1PurchaseRequestMonitoringRouter.applyRoutes(server,           "/purchase-requests/monitoring");
     v1PurchaseRequestRouter().applyRoutes(server,                   "/purchase-requests");
     //PURCHASE ORDER
-    v1PurchaseOrderSplitRouter.applyRoutes(server,                  "/purchase-oders/split");
-    v1POMonitoringRouter.applyRoutes(server,                        "/purchase-oders/monitoring");
-    v1PurchaseOrderUnpostedRouter.applyRoutes(server,               "/purchase-oders/unposted");
-    v1PurchaseOrderByUserRouter.applyRoutes(server,                 "/purchase-oders/by-user");
-    v1ReportPoCategoryPeriode.applyRoutes(server,                   "/purchase-oders/reports/categories");
-    v1ReportPoUnitPeriode.applyRoutes(server,                       "/purchase-oders/reports/units");
-    v1ReportPoSubUnitPeriode.applyRoutes(server,                    "/purchase-oders/reports/subUnits");
-    v1PurchaseOrderRouter().applyRoutes(server,                     "/purchase-oders");
+    v1PurchaseOrderSplitRouter.applyRoutes(server,                  "/purchase-orders/split");
+    v1POMonitoringRouter.applyRoutes(server,                        "/purchase-orders/monitoring");
+    v1PurchaseOrderUnpostedRouter.applyRoutes(server,               "/purchase-orders/unposted");
+    v1PurchaseOrderByUserRouter.applyRoutes(server,                 "/purchase-orders/by-user");
+    v1ReportPoCategoryPeriode.applyRoutes(server,                   "/purchase-orders/reports/categories");
+    v1ReportPoUnitPeriode.applyRoutes(server,                       "/purchase-orders/reports/units");
+    v1ReportPoSubUnitPeriode.applyRoutes(server,                    "/purchase-orders/reports/subUnits");
+    v1PurchaseOrderRouter().applyRoutes(server,                     "/purchase-orders");
     //PURCHASE ORDER EXTERNAL
-    v1PurchaseOrderExternalPostRouter.applyRoutes(server,           "/purchase-oders/externals/post");
-    v1PurchaseOrderExternalsUnpostedRouter.applyRoutes(server,      "/purchase-oders/externals/posted"); 
-    v1PurchaseOrderExternalByUserRouter.applyRoutes(server,         "/purchase-oders/externals/by-user");
-    v1PurchaseOrderExternalRouter().applyRoutes(server,             "/purchase-oders/externals");
+    v1PurchaseOrderExternalPostRouter.applyRoutes(server,           "/purchase-orders/externals/post");
+    v1PurchaseOrderExternalsUnpostedRouter.applyRoutes(server,      "/purchase-orders/externals/posted"); 
+    v1PurchaseOrderExternalByUserRouter.applyRoutes(server,         "/purchase-orders/externals/by-user");
+    v1PurchaseOrderExternalRouter().applyRoutes(server,             "/purchase-orders/externals");
     //DELIVERY ORDER
     v1DOMonitoringByUserRouter.applyRoutes(server,                  "/delivery-orders/monitoring/by-user");
     v1DOMonitoringRouter.applyRoutes(server,                        "/delivery-orders/monitoring");
