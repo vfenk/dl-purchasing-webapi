@@ -19,6 +19,9 @@ var v1PurchaseOrderExternalPostRouter = require('../src/routers/v1/purchase-orde
 var v1PurchaseOrderExternalsUnpostedRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-posted-router');
 var v1PurchaseOrderExternalByUserRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-by-user-router');
 var v1PurchaseOrderExternalRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-router');
+var v1PurchaseOrderExternalCancelRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-cancel-router');
+var v1PurchaseOrderExternalUnpostRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-unpost-router');
+var v1PurchaseOrderExternalCloseRouter = require('../src/routers/v1/purchase-order-external/purchase-order-external-close-router');
 // DELIVERY ORDER
 var v1DOMonitoringByUserRouter = require('../src/routers/v1/delivery-order/delivery-order-monitoring-by-user-router');
 var v1DOMonitoringRouter = require('../src/routers/v1/delivery-order/delivery-order-monitoring-router');
@@ -63,6 +66,9 @@ var v1UnitPaymentOrderRouter = require('../src/routers/v1/unit-payment-note/unit
     v1PurchaseOrderExternalsUnpostedRouter().applyRoutes(server,            "/purchase-orders/externals/posted"); 
     v1PurchaseOrderExternalByUserRouter().applyRoutes(server,               "/purchase-orders/externals/by-user");
     v1PurchaseOrderExternalRouter().applyRoutes(server,                     "/purchase-orders/externals");
+    v1PurchaseOrderExternalCancelRouter().applyRoutes(server,               "/purchase-orders/externals/cancel");
+    v1PurchaseOrderExternalUnpostRouter().applyRoutes(server,               "/purchase-orders/externals/unpost");
+    v1PurchaseOrderExternalCloseRouter().applyRoutes(server,                "/purchase-orders/externals/close");
     //DELIVERY ORDER
     v1DOMonitoringByUserRouter().applyRoutes(server,                        "/delivery-orders/monitoring/by-user");
     v1DOMonitoringRouter().applyRoutes(server,                              "/delivery-orders/monitoring");
