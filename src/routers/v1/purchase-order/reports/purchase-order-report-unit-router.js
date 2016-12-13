@@ -7,6 +7,7 @@ var passport = require('../../../../passports/jwt-passport');
 
 function getRouter(){
     var router = new Router();
+    
     router.get("/", passport, function(request, response, next) {
         db.get().then(db => {
             var manager = new PurchaseOrderManager(db, request.user);
@@ -28,8 +29,8 @@ function getRouter(){
                             var data = [];
                             var index = 0;
                             var PriceTotals=0;
-                            for (var purchaseOrder of docs) {
-                                PriceTotals +=purchaseOrder.pricetotal;
+                            for (var Po of docs) {
+                                PriceTotals +=Po.pricetotal;
                             }
                             for (var purchaseOrder of docs) {
                                 index++;
@@ -55,15 +56,15 @@ function getRouter(){
                                 "Unit":"Total",
                                 "Rp": amounts,
                                 "%": TotalPercentage
-                            }
+                            };
                             data.push(totals);
                             var options = {
                                 "No": "number",
                                 "Unit": "string",
                                 "Rp": "number",
                                 "%": "number",
-                            }
-                            if(sdate!="undefined" && edate!="undefined")
+                            };
+                            if(sdate!=undefined && edate!=undefined)
                             {
                                 response.xls(`Laporan Total Pembelian Per Divisi ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data,options);
                             }
