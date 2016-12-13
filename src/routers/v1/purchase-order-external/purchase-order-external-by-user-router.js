@@ -83,6 +83,7 @@ function getRouter(){
             }
             else {
                 var manager = new PurchaseOrderExternalManager(db, request.user);
+                var id = request.params.id;
                 var query={
                     "_createdBy": request.user.username,
                     "_id": new ObjectId(id)
