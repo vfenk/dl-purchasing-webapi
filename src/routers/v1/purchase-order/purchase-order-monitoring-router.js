@@ -96,7 +96,8 @@ function getRouter(){
                                         "No Koreksi": _correctionNo || "-",
                                         "Nilai Koreksi": _correctionPriceTotal || 0,
                                         "Ket. Koreksi": _correctionRemark || "-",
-                                        "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
+                                        "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
+                                        "Status" : PO.status ? PO.status.label : "-"
                                     }
                                     data.push(_item);
                                 }
@@ -142,7 +143,8 @@ function getRouter(){
                                     "No Koreksi": "-",
                                     "Nilai Koreksi": 0,
                                     "Ket. Koreksi": "-",
-                                    "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-"
+                                    "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
+                                    "Status" : PO.status ? PO.status.label : "-"
                                 }
                                 data.push(_item);
                             }
@@ -188,7 +190,8 @@ function getRouter(){
                             "Tanggal PPH": "string",
                             "No PPH": "string",
                             "Nilai PPH": "string",
-                            "Keterangan": "string"
+                            "Keterangan": "string",
+                            "Status": "string"
                         };
 
 
