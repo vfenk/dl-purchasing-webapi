@@ -36,6 +36,11 @@ function getRouter() {
                         for (var purchaseRequest of docs) {
                             for (var item of purchaseRequest.items) {
                                 index++;
+                                var status = purchaseRequest.status ? purchaseRequest.status.label : "-";
+
+                                if (purchaseRequest.status.value === 4 || purchaseRequest.status.value === 9) {
+                                    status = `${status} (${item.deliveryOrderNos.join(", ")})`;
+                                }
                                 var _item = {
                                     "No": index,
                                     "Unit": `${purchaseRequest.unit.division.name} - ${purchaseRequest.unit.name}`,
@@ -48,7 +53,7 @@ function getRouter() {
                                     "Jumlah": item.quantity,
                                     "Satuan": item.product.uom.unit,
                                     "Tanggal Diminta Datang": purchaseRequest.expectedDeliveryDate ? moment(new Date(purchaseRequest.expectedDeliveryDate)).format(dateFormat2) : "-",
-                                    "Status":purchaseRequest.status ? purchaseRequest.status.name : "-"
+                                    "Status": status
                                 }
                                 data.push(_item);
                             }

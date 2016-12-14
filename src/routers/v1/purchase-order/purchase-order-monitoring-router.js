@@ -97,7 +97,7 @@ function getRouter(){
                                         "Nilai Koreksi": _correctionPriceTotal || 0,
                                         "Ket. Koreksi": _correctionRemark || "-",
                                         "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
-                                        "Status" : PO.status ? PO.status.name : "-"
+                                        "Status" : PO.status ? PO.status.label : "-"
                                     }
                                     data.push(_item);
                                 }
@@ -144,7 +144,7 @@ function getRouter(){
                                     "Nilai Koreksi": 0,
                                     "Ket. Koreksi": "-",
                                     "Keterangan": PO.purchaseOrderExternal.remark ? PO.purchaseOrderExternal.remark : "-",
-                                    "Status" : PO.status ? PO.status.name : "-"
+                                    "Status" : PO.status ? PO.status.label : "-"
                                 }
                                 data.push(_item);
                             }
