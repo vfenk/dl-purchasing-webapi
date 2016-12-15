@@ -2,184 +2,211 @@ var Router = require('restify-router').Router;
 var db = require("../../../db");
 var PurchaseRequestManager = require("dl-module").managers.purchasing.PurchaseRequestManager;
 var resultFormatter = require("../../../result-formatter");
-
+var ObjectId = require("mongodb").ObjectId;
 var passport = require('../../../passports/jwt-passport');
 const apiVersion = '1.0.0';
 
-function getRouter(){
+function getRouter() {
     var router = new Router();
-    router.get("/", passport, (request, response, next) => {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
+    var getManager = (user) => {
+        return db.get()
+            .then((db) => {
+                return Promise.resolve(new PurchaseRequestManager(db, user));
+            });
+    };
 
-            var sorting = {
-                "_updatedDate": -1
-            };
-            var filter = {
-                _createdBy: request.user.username
-            };
+    router.get("/", passport, function (request, response, next) {
+        var user = request.user;
+        var query = request.query;
+        query.order = {
+            "_updatedDate": -1
+        };
+        query.filter = {
+            "_createdBy": request.user.username
+        };
+        query.select = [
+            "unit.division.name", "unit.name", "category.name", "date", "no", "expectedDeliveryDate", "_createdBy", "isPosted"
+        ];
 
-            var query = request.queryInfo;
-            query.filter = filter;
-            query.order = sorting;
-            query.select = [
-                "unit.division.name","unit.name", "category.name", "date", "no", "expectedDeliveryDate", "_createdBy", "isPosted"
-            ];
-            manager.read(query)
-                .then(docs => {
-                    var result = resultFormatter.ok(apiVersion, 200, docs.data);
-                    delete docs.data;
-                    delete docs.order;
-                    result.info = docs;
-                    response.send(200, result);
-                })
-                .catch(e => {
-                    response.send(500, "gagal ambil data");
-                });
-        })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+        getManager(user)
+            .then((manager) => {
+                return manager.read(query);
+            })
+            .then(docs => {
+                var result = resultFormatter.ok(apiVersion, 200, docs.data);
+                delete docs.data;
+                result.info = docs;
+                return Promise.resolve(result);
+            })
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
     });
 
     var handlePdfRequest = function (request, response, next) {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
-
-            var id = request.params.id;
-            var dateFormat = "DD MMMM YYYY";
-            var locale = 'id-ID';
-            var moment = require('moment');
-            moment.locale(locale);
-            manager.pdf(id)
-                .then(docBinary => {
-                    manager.getSingleById(id)
-                        .then(doc => {
-                            response.writeHead(200, {
-                                'Content-Type': 'application/pdf',
-                                'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
-                                'Content-Length': docBinary.length
-                            });
-                            response.end(docBinary);
-                        })
-                        .catch(e => {
-                            var error = resultFormatter.fail(apiVersion, 400, e);
-                            response.send(400, error);
-                        });
-                })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
-                });
-        })
+        var id = request.params.id;
+        var user = request.user;
+        getManager(user)
+            .then((manager) => {
+                return manager.pdf(id)
+                    .then(docBinary => {
+                        return manager.getSingleById(id)
+                            .then(doc => {
+                                response.writeHead(200, {
+                                    'Content-Type': 'application/pdf',
+                                    'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
+                                    'Content-Length': docBinary.length
+                                });
+                                response.end(docBinary);
+                            })
+                    })
+            })
             .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
     };
 
-    router.get('/:id', passport, (request, response, next) => {
-        db.get().then(db => {
-            if ((request.headers.accept || '').toString().indexOf("application/pdf") >= 0) {
-                next();
-            }
-            else {
-                var manager = new PurchaseRequestManager(db, request.user);
-                var id = request.params.id;
-                manager.getSingleById(id)
-                    .then(doc => {
-                        var result = resultFormatter.ok(apiVersion, 200, doc);
-                        response.send(200, result);
-                    })
-                    .catch(e => {
-                        var error = resultFormatter.fail(apiVersion, 400, e);
-                        response.send(400, error);
-                    });
-            }
-        })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
-            });
+    router.get("/:id", passport, (request, response, next) => {
+        if ((request.headers.accept || '').toString().indexOf("application/pdf") >= 0) {
+            next();
+        }
+        else {
+            var user = request.user;
+            var id = request.params.id;
+            var query = {
+                "_createdBy": request.user.username,
+                "_id": new ObjectId(id)
+            };
+            getManager(user)
+                .then((manager) => {
+                    return manager.getSingleByQueryOrDefault(query);
+                })
+                .then((doc) => {
+                    var result;
+                    if (!doc) {
+                        result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                    }
+                    else {
+                        result = resultFormatter.ok(apiVersion, 200, doc);
+                    }
+                    return Promise.resolve(result);
+                })
+                .then((result) => {
+                    response.send(result.statusCode, result);
+                })
+                .catch((e) => {
+                    var statusCode = 500;
+                    if (e.name === "ValidationError")
+                        statusCode = 400;
+                    var error = resultFormatter.fail(apiVersion, statusCode, e);
+                    response.send(statusCode, error);
+                });
+        }
     }, handlePdfRequest);
 
+    router.post("/", passport, (request, response, next) => {
+        var user = request.user;
+        var data = request.body;
 
-    router.get('/:id', passport, (request, response, next) => {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
-
-            var id = request.params.id;
-
-            manager.getSingleById(id)
-                .then(doc => {
-                    var result = resultFormatter.ok(apiVersion, 200, doc);
-                    response.send(200, result);
-                })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
-                });
-
-        });
+        getManager(user)
+            .then((manager) => {
+                return manager.create(data);
+            })
+            .then((docId) => {
+                response.header("Location", `${request.url}/${docId.toString()}`);
+                var result = resultFormatter.ok(apiVersion, 201);
+                return Promise.resolve(result);
+            })
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
+            });
     });
 
-    router.post('/', passport, (request, response, next) => {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
+    router.put("/:id", passport, (request, response, next) => {
+        var user = request.user;
+        var id = request.params.id;
+        var data = request.body;
 
-            var data = request.body;
-
-            manager.create(data)
-                .then(docId => {
-                    response.header('Location', `${request.url}/${docId.toString()}`);
-                    var result = resultFormatter.ok(apiVersion, 201);
-                    response.send(201, result);
-                })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
-                })
-        })
+        getManager(user)
+            .then((manager) => {
+                return manager.getSingleByIdOrDefault(id)
+                    .then((doc) => {
+                        var result;
+                        if (!doc) {
+                            result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                            return Promise.resolve(result);
+                        }
+                        else {
+                            return manager.update(data)
+                                .then((docId) => {
+                                    result = resultFormatter.ok(apiVersion, 204);
+                                    return Promise.resolve(result);
+                                });
+                        }
+                    });
+            })
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
+            });
     });
 
-    router.put('/:id', passport, (request, response, next) => {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
+    router.del("/:id", passport, (request, response, next) => {
+        var user = request.user;
+        var id = request.params.id;
 
-            var id = request.params.id;
-            var data = request.body;
-
-            manager.update(data)
-                .then(docId => {
-                    var result = resultFormatter.ok(apiVersion, 204);
-                    response.send(204, result);
-                })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
-                });
-
-        });
-    });
-
-    router.del('/:id', passport, (request, response, next) => {
-        db.get().then(db => {
-            var manager = new PurchaseRequestManager(db, request.user);
-
-            var id = request.params.id;
-            var data = request.body;
-
-            manager.delete(data)
-                .then(docId => {
-                    var result = resultFormatter.ok(apiVersion, 204);
-                    response.send(204, result);
-                })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
-                });
-        });
+        getManager(user)
+            .then((manager) => {
+                return manager.getSingleByIdOrDefault(id)
+                    .then((doc) => {
+                        var result;
+                        if (!doc) {
+                            result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                            return Promise.resolve(result);
+                        }
+                        else {
+                            return manager.delete(doc)
+                                .then((docId) => {
+                                    result = resultFormatter.ok(apiVersion, 204);
+                                    return Promise.resolve(result);
+                                });
+                        }
+                    });
+            })
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
+            });
     });
     return router;
 }
