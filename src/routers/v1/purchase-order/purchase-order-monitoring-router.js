@@ -20,8 +20,9 @@ function getRouter(){
             var supplierId = request.params.supplierId;
             var dateFrom = request.params.dateFrom;
             var dateTo = request.params.dateTo;
+            var state = parseInt(request.params.state);
 
-            manager.getDataPOMonitoringPembelian(unitId, categoryId, PODLNo, PRNo, supplierId, dateFrom, dateTo)
+            manager.getDataPOMonitoringPembelian(unitId, categoryId, PODLNo, PRNo, supplierId, dateFrom, dateTo, state)
                 .then(docs => {
 
                     var dateFormat = "DD MMM YYYY";
