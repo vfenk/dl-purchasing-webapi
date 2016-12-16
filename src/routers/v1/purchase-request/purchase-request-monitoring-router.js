@@ -18,8 +18,9 @@ function getRouter() {
             var budgetId = request.params.budgetId;
             var dateFrom = request.params.dateFrom;
             var dateTo = request.params.dateTo;
+            var state = parseInt(request.params.state);
 
-            manager.getDataPRMonitoring(unitId, categoryId, budgetId, PRNo, dateFrom, dateTo)
+            manager.getDataPRMonitoring(unitId, categoryId, budgetId, PRNo, dateFrom, dateTo, state)
                 .then(docs => {
                     if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                         var result = resultFormatter.ok(apiVersion, 200, docs);
