@@ -1,4 +1,5 @@
 var Router = require('restify-router').Router;
+var router = new Router();
 var db = require("../../../../db");
 var resultFormatter = require("../../../../result-formatter");
 const apiVersion = '1.0.0';
@@ -12,7 +13,7 @@ function getRouter(){
                 var manager = new PurchaseOrderManager(db, request.user);
                 var sdate = request.params.dateFrom;
                 var edate = request.params.dateTo;
-                manager.getDataPOCategory(sdate, edate)
+                manager.getDataPOUnitCategory(sdate, edate)
                     .then(docs => {
                         if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                             var result = resultFormatter.ok(apiVersion, 200, docs);
@@ -38,7 +39,9 @@ function getRouter(){
                                 var amount= x1 + '.' + x[1];
                                 var item={
                                     "No": index,
-                                    "Kategori":purchaseOrder._id,
+                                    "Divisi": purchaseOrder._id.division,
+                                    "Unit":purchaseOrder._id.unit,
+                                    "Kategori":purchaseOrder._id.category,
                                     "Rp"    : amount,
                                     "%":((purchaseOrder.pricetotal/PriceTotals)*100).toFixed(2)
                                 }
@@ -59,16 +62,18 @@ function getRouter(){
                             data.push(totals);
                             var options = {
                                 "No": "number",
+                                "Divisi": "string",
+                                "Unit": "string",
                                 "Kategori": "string",
                                 "Rp": "number",
                                 "%": "number",
                             };
                             if(sdate!=undefined && edate!=undefined)
                             {
-                                response.xls(`Laporan Total Pembelian Per Kategori ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data, options);
+                                response.xls(`Laporan Total Pembelian Per Unit Per Kategori ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data, options);
                             }
                             else
-                            response.xls(`Laporan Total Pembelian Per Kategori.xlsx`, data,options);
+                            response.xls(`Laporan Total Pembelian Per Unit Per Kategori.xlsx`, data,options);
                         }
                     })
                     .catch(e => {

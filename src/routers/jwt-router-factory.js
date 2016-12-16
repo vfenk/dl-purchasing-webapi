@@ -1,33 +1,33 @@
-var Router = require('restify-router').Router;
-var db = require("../../../db");
-var UnitReceiptNoteManager = require("dl-module").managers.purchasing.UnitReceiptNoteManager;
-var resultFormatter = require("../../../result-formatter");
-var ObjectId = require("mongodb").ObjectId;
-const apiVersion = '1.0.0';
-var passport = require('../../../passports/jwt-passport');
+var Router = require("restify-router").Router;
+var db = require("../db");
+var resultFormatter = require("../result-formatter");
+var passport = require("../passports/jwt-passport");
 
-function getRouter() {
-    var router = new Router();
+function getJWTRouter(ManagerType, opts) {
+
+    var options = opts || {
+        version: "1.0.0"
+    };
+
+    var apiVersion = options.version || "1.0.0";
+    var defaultSelect = options.defaultSelect || [];
+    var defaultOrder = options.defaultOrder || {};
+
     var getManager = (user) => {
         return db.get()
             .then((db) => {
-                return Promise.resolve(new UnitReceiptNoteManager(db, user));
+                return Promise.resolve(new ManagerType(db, user));
             });
     };
 
-    router.get("/", passport, function (request, response, next) {
+    var router = new Router();
+
+    router.get("/", passport, function(request, response, next) {
         var user = request.user;
         var query = request.query;
-        query.order = {
-            "_updatedDate": -1
-        };
-        query.filter = {
-            "_createdBy": request.user.username
-        };
-        query.select = [
-            "unit.division.name", "unit.name", , "no", "date", "supplier.name", "deliveryOrder.no"
-        ];
-
+        query.order = Object.assign({}, defaultOrder, query.order);
+        query.select = query.select || defaultSelect;
+        
         getManager(user)
             .then((manager) => {
                 return manager.read(query);
@@ -50,70 +50,36 @@ function getRouter() {
             });
     });
 
-    var handlePdfRequest = function (request, response, next) {
-        var id = request.params.id;
+
+    router.get("/:id", passport, (request, response, next) => {
         var user = request.user;
+        var id = request.params.id;
+
         getManager(user)
             .then((manager) => {
-                return manager.pdf(id)
-                    .then(docBinary => {
-                        return manager.getSingleById(id)
-                            .then(doc => {
-                                response.writeHead(200, {
-                                    'Content-Type': 'application/pdf',
-                                    'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
-                                    'Content-Length': docBinary.length
-                                });
-                                response.end(docBinary);
-                            })
-                    })
+                return manager.getSingleByIdOrDefault(id);
             })
-            .catch(e => {
+            .then((doc) => {
+                var result;
+                if (!doc) {
+                    result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                }
+                else {
+                    result = resultFormatter.ok(apiVersion, 200, doc);
+                }
+                return Promise.resolve(result);
+            })
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
                 var statusCode = 500;
                 if (e.name === "ValidationError")
                     statusCode = 400;
                 var error = resultFormatter.fail(apiVersion, statusCode, e);
                 response.send(statusCode, error);
             });
-    };
-
-    router.get("/:id", passport, (request, response, next) => {
-        if ((request.headers.accept || '').toString().indexOf("application/pdf") >= 0) {
-            next();
-        }
-        else {
-            var user = request.user;
-            var id = request.params.id;
-            var query = {
-                "_createdBy": request.user.username,
-                "_id": new ObjectId(id)
-            };
-            getManager(user)
-                .then((manager) => {
-                    return manager.getSingleByQueryOrDefault(query);
-                })
-                .then((doc) => {
-                    var result;
-                    if (!doc) {
-                        result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
-                    }
-                    else {
-                        result = resultFormatter.ok(apiVersion, 200, doc);
-                    }
-                    return Promise.resolve(result);
-                })
-                .then((result) => {
-                    response.send(result.statusCode, result);
-                })
-                .catch((e) => {
-                    var statusCode = 500;
-                    if (e.name === "ValidationError")
-                        statusCode = 400;
-                    var error = resultFormatter.fail(apiVersion, statusCode, e);
-                    response.send(statusCode, error);
-                });
-        }
-    }, handlePdfRequest);
+    });
 
     router.post("/", passport, (request, response, next) => {
         var user = request.user;
@@ -208,7 +174,7 @@ function getRouter() {
                 response.send(statusCode, error);
             });
     });
+
     return router;
 }
-
-module.exports = getRouter;
+module.exports = getJWTRouter;

@@ -1,164 +1,90 @@
-var Router = require('restify-router').Router;
-var router = new Router();
-var db = require("../../../db");
-var UnitReceiptNoteManager = require("dl-module").managers.purchasing.UnitReceiptNoteManager;
-var resultFormatter = require("../../../result-formatter");
 const apiVersion = '1.0.0';
-var passport = require('../../../passports/jwt-passport');
+var Manager = require("dl-module").managers.purchasing.UnitReceiptNoteManager;
+var resultFormatter = require("../../../result-formatter");
+var db = require("../../../db");
 
-router.get("/", passport, (request, response, next) => {
-    db.get().then(db => {
-        var manager = new UnitReceiptNoteManager(db, {
-            username: 'router'
-        });
+var JwtRouterFactory = require("../../jwt-router-factory");
 
-        var sorting = {
-            "_updatedDate": -1
-        };
-        var query = request.queryInfo;
-        query.order = sorting;
-        query.select = [
-           "unit.division.name","unit.name",,"no","date","supplier.name","deliveryOrder.no"
-        ];
-        manager.read(query)
-            .then(docs => {
-                var result = resultFormatter.ok(apiVersion, 200, docs.data);
-                delete docs.data;
-                delete docs.order;
-                result.info = docs;
-                response.send(200, result);
-            })
-            .catch(e => {
-                response.send(500, "gagal ambil data");
-            });
-    })
-        .catch(e => {
-            var error = resultFormatter.fail(apiVersion, 400, e);
-            response.send(400, error);
-        });
-});
-
-var handlePdfRequest = function (request, response, next) {
-    db.get().then(db => {
-        var manager = new UnitReceiptNoteManager(db, request.user);
-
-        var id = request.params.id;
-        manager.pdf(id)
-            .then(docBinary => {
-                // var base64 = 'data:application/pdf;base64,' + docBinary.toString('base64')
-                manager.getSingleById(id)
-                    .then(doc => {
-                        response.writeHead(200, {
-                            'Content-Type': 'application/pdf',
-                            'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
-                            'Content-Length': docBinary.length
+var handlePdfRequest = function(request, response, next) {
+    db.get()
+        .then(db => {
+            var manager = new Manager(db, request.user);
+            var id = request.params.id;
+            manager.pdf(id)
+                .then(docBinary => {
+                    manager.getSingleById(id)
+                        .then(doc => {
+                            response.writeHead(200, {
+                                'Content-Type': 'application/pdf',
+                                'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
+                                'Content-Length': docBinary.length
+                            });
+                            response.end(docBinary);
+                        })
+                        .catch(e => {
+                            var error = resultFormatter.fail(apiVersion, 400, e);
+                            response.send(400, error);
                         });
-                        response.end(docBinary);
-                    })
-                    .catch(e => {
-                        var error = resultFormatter.fail(apiVersion, 400, e);
-                        response.send(400, error);
-                    });
-            })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
-            });
-    })
+                })
+                .catch(e => {
+                    var error = resultFormatter.fail(apiVersion, 400, e);
+                    response.send(400, error);
+                });
+        })
         .catch(e => {
             var error = resultFormatter.fail(apiVersion, 400, e);
             response.send(400, error);
         });
 };
 
-router.get('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
+function getRouter() {
+    var router = JwtRouterFactory(Manager, {
+        version: apiVersion,
+        defaultOrder: {
+            "_updatedDate": -1
+        },
+        defaultSelect:["unit.division.name","unit.name",,"no","date","supplier.name","deliveryOrder.no"]
+    });
+
+    var route = router.routes["get"].find(route => route.options.path === "/:id");
+    route.handlers[route.handlers.length - 1] = function(request, response, next) {
         if ((request.headers.accept || '').toString().indexOf("application/pdf") >= 0) {
             next();
         }
         else {
-            var manager = new UnitReceiptNoteManager(db, request.user);
             var id = request.params.id;
-            manager.getSingleById(id)
-                .then(doc => {
-                    var result = resultFormatter.ok(apiVersion, 200, doc);
-                    response.send(200, result);
+            db.get()
+                .then(db => {
+                    var manager = new Manager(db, request.user);
+                    return Promise.resolve(manager);
                 })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
+                .then((manager) => {
+                    return manager.getSingleByIdOrDefault(id);
+                })
+                .then((doc) => {
+                    var result;
+                    if (!doc) {
+                        result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                    }
+                    else {
+                        result = resultFormatter.ok(apiVersion, 200, doc);
+                    }
+                    return Promise.resolve(result);
+                })
+                .then((result) => {
+                    response.send(result.statusCode, result);
+                })
+                .catch((e) => {
+                    var statusCode = 500;
+                    if (e.name === "ValidationError")
+                        statusCode = 400;
+                    var error = resultFormatter.fail(apiVersion, statusCode, e);
+                    response.send(statusCode, error);
                 });
         }
-    })
-        .catch(e => {
-            var error = resultFormatter.fail(apiVersion, 400, e);
-            response.send(400, error);
-        });
-}, handlePdfRequest);
+    };
+    route.handlers.push(handlePdfRequest);
+    return router;
+}
 
-router.post('/', passport, (request, response, next) => {
-    db.get().then(db => {
-        var manager = new UnitReceiptNoteManager(db, {
-            username: 'router'
-        });
-
-        var data = request.body;
-        manager.create(data)
-            .then(docId => {
-                response.header('Location', `${request.url}/${docId.toString()}`);
-                var result = resultFormatter.ok(apiVersion, 201);
-                response.send(201, result);
-            })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
-            });
-
-    });
-});
-
-router.put('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
-        var manager = new UnitReceiptNoteManager(db, {
-            username: 'router'
-        });
-
-        var id = request.params.id;
-        var data = request.body;
-
-        manager.update(data)
-            .then(docId => {
-                var result = resultFormatter.ok(apiVersion, 204);
-                response.send(204, result);
-            })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
-            });
-
-    });
-});
-
-router.del('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
-        var manager = new UnitReceiptNoteManager(db, {
-            username: 'router'
-        });
-
-        var id = request.params.id;
-        var data = request.body;
-
-        manager.delete(data)
-            .then(docId => {
-                var result = resultFormatter.ok(apiVersion, 204);
-                response.send(204, result);
-            })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
-            });
-    });
-});
-
-
-module.exports = router;
+module.exports = getRouter;

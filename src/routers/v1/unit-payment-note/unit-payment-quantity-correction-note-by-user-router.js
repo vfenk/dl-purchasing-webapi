@@ -1,164 +1,214 @@
 var Router = require('restify-router').Router;
-var router = new Router();
 var db = require("../../../db");
 var UnitPaymentQuantityCorrectionNoteManager = require("dl-module").managers.purchasing.UnitPaymentQuantityCorrectionNoteManager;
 var resultFormatter = require("../../../result-formatter");
+var ObjectId = require("mongodb").ObjectId;
 const apiVersion = '1.0.0';
 var passport = require('../../../passports/jwt-passport');
 
-router.get("/", passport, (request, response, next) => {
-    db.get().then(db => {
-        var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
-        var sorting = {
+function getRouter(){
+    var router = new Router();
+    var getManager = (user) => {
+        return db.get()
+            .then((db) => {
+                return Promise.resolve(new UnitPaymentQuantityCorrectionNoteManager(db, user));
+            });
+    };
+
+    router.get("/", passport, function (request, response, next) {
+        var user = request.user;
+        var query = request.query;
+        query.order = {
             "_updatedDate": -1
         };
-        var filter = {
-            _createdBy: request.user.username
+        query.filter = {
+            "_createdBy": request.user.username
         };
-
-        var query = request.queryInfo;
-        query.filter = filter;
-        query.order = sorting;
         query.select = [
             "no", "date", "unitPaymentOrder.no", "unitPaymentOrder.useIncomeTax", "unitPaymentOrder.supplier.name", "invoiceCorrectionNo", "unitPaymentOrder.dueDate"
-        ]
+        ];
 
-        manager.read(query)
+        getManager(user)
+            .then((manager) => {
+                return manager.read(query);
+            })
             .then(docs => {
                 var result = resultFormatter.ok(apiVersion, 200, docs.data);
                 delete docs.data;
-                delete docs.order;
                 result.info = docs;
-                response.send(200, result);
+                return Promise.resolve(result);
             })
-            .catch(e => {
-                response.send(500, "gagal ambil data");
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
-    })
-        .catch(e => {
-            var error = resultFormatter.fail(apiVersion, 400, e);
-            response.send(400, error);
-        });
-});
+    });
 
-var handlePdfRequest = function (request, response, next) {
-    db.get().then(db => {
-        var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
-
+    var handlePdfRequest = function (request, response, next) {
         var id = request.params.id;
-        manager.pdf(id)
-            .then(docBinary => {
-                // var base64 = 'data:application/pdf;base64,' + docBinary.toString('base64')
-                manager.getSingleById(id)
-                    .then(doc => {
-                        response.writeHead(200, {
-                            'Content-Type': 'application/pdf',
-                            'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
-                            'Content-Length': docBinary.length
-                        });
-                        response.end(docBinary);
+        var user = request.user;
+        getManager(user)
+            .then((manager) => {
+                return manager.pdf(id)
+                    .then(docBinary => {
+                        return manager.getSingleById(id)
+                            .then(doc => {
+                                response.writeHead(200, {
+                                    'Content-Type': 'application/pdf',
+                                    'Content-Disposition': `attachment; filename=${doc.no}.pdf`,
+                                    'Content-Length': docBinary.length
+                                });
+                                response.end(docBinary);
+                            })
                     })
-                    .catch(e => {
-                        var error = resultFormatter.fail(apiVersion, 400, e);
-                        response.send(400, error);
-                    });
             })
             .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
-    })
-        .catch(e => {
-            var error = resultFormatter.fail(apiVersion, 400, e);
-            response.send(400, error);
-        });
-};
+    };
 
-router.get('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
+    router.get("/:id", passport, (request, response, next) => {
         if ((request.headers.accept || '').toString().indexOf("application/pdf") >= 0) {
             next();
         }
         else {
-            var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
+            var user = request.user;
             var id = request.params.id;
-            manager.getSingleById(id)
-                .then(doc => {
-                    var result = resultFormatter.ok(apiVersion, 200, doc);
-                    response.send(200, result);
+            var query = {
+                "_createdBy": request.user.username,
+                "_id": new ObjectId(id)
+            };
+            getManager(user)
+                .then((manager) => {
+                    return manager.getSingleByQueryOrDefault(query);
                 })
-                .catch(e => {
-                    var error = resultFormatter.fail(apiVersion, 400, e);
-                    response.send(400, error);
+                .then((doc) => {
+                    var result;
+                    if (!doc) {
+                        result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                    }
+                    else {
+                        result = resultFormatter.ok(apiVersion, 200, doc);
+                    }
+                    return Promise.resolve(result);
+                })
+                .then((result) => {
+                    response.send(result.statusCode, result);
+                })
+                .catch((e) => {
+                    var statusCode = 500;
+                    if (e.name === "ValidationError")
+                        statusCode = 400;
+                    var error = resultFormatter.fail(apiVersion, statusCode, e);
+                    response.send(statusCode, error);
                 });
         }
-    })
-        .catch(e => {
-            var error = resultFormatter.fail(apiVersion, 400, e);
-            response.send(400, error);
-        });
-}, handlePdfRequest);
+    }, handlePdfRequest);
 
-router.post('/', passport, (request, response, next) => {
-    db.get().then(db => {
-
-        var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
-
+    router.post("/", passport, (request, response, next) => {
+        var user = request.user;
         var data = request.body;
-        manager.create(data)
-            .then(docId => {
-                response.header('Location', `${request.url}/${docId.toString()}`);
+
+        getManager(user)
+            .then((manager) => {
+                return manager.create(data);
+            })
+            .then((docId) => {
+                response.header("Location", `${request.url}/${docId.toString()}`);
                 var result = resultFormatter.ok(apiVersion, 201);
-                response.send(201, result);
+                return Promise.resolve(result);
             })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
-
     });
-});
 
-router.put('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
-
-        var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
-
+    router.put("/:id", passport, (request, response, next) => {
+        var user = request.user;
         var id = request.params.id;
         var data = request.body;
 
-        manager.update(data)
-            .then(docId => {
-                var result = resultFormatter.ok(apiVersion, 204);
-                response.send(204, result);
+        getManager(user)
+            .then((manager) => {
+                return manager.getSingleByIdOrDefault(id)
+                    .then((doc) => {
+                        var result;
+                        if (!doc) {
+                            result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                            return Promise.resolve(result);
+                        }
+                        else {
+                            return manager.update(data)
+                                .then((docId) => {
+                                    result = resultFormatter.ok(apiVersion, 204);
+                                    return Promise.resolve(result);
+                                });
+                        }
+                    });
             })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
-
     });
-});
 
-router.del('/:id', passport, (request, response, next) => {
-    db.get().then(db => {
-
-        var manager = new UnitPaymentQuantityCorrectionNoteManager(db, request.user);
-
+    router.del("/:id", passport, (request, response, next) => {
+        var user = request.user;
         var id = request.params.id;
-        var data = request.body;
 
-        manager.delete(data)
-            .then(docId => {
-                var result = resultFormatter.ok(apiVersion, 204);
-                response.send(204, result);
+        getManager(user)
+            .then((manager) => {
+                return manager.getSingleByIdOrDefault(id)
+                    .then((doc) => {
+                        var result;
+                        if (!doc) {
+                            result = resultFormatter.fail(apiVersion, 404, new Error("data not found"));
+                            return Promise.resolve(result);
+                        }
+                        else {
+                            return manager.delete(doc)
+                                .then((docId) => {
+                                    result = resultFormatter.ok(apiVersion, 204);
+                                    return Promise.resolve(result);
+                                });
+                        }
+                    });
             })
-            .catch(e => {
-                var error = resultFormatter.fail(apiVersion, 400, e);
-                response.send(400, error);
+            .then((result) => {
+                response.send(result.statusCode, result);
+            })
+            .catch((e) => {
+                var statusCode = 500;
+                if (e.name === "ValidationError")
+                    statusCode = 400;
+                var error = resultFormatter.fail(apiVersion, statusCode, e);
+                response.send(statusCode, error);
             });
     });
-});
+    return router;
+}
 
-
-module.exports = router;
+module.exports = getRouter;
