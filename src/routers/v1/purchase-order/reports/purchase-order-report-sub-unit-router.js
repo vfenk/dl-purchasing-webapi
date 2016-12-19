@@ -12,9 +12,9 @@ function getRouter(){
             var manager = new PurchaseOrderManager(db, request.user);
             var sdate = request.params.dateFrom;
             var edate = request.params.dateTo;
-            var unit = request.params.unit;
+            var divisiId = request.params.divisiId;
 
-            manager.getDataPODetailUnit(sdate, edate, unit)
+            manager.getDataPODetailUnit(sdate, edate, divisiId)
                 .then(docs => {
                     if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                         var result = resultFormatter.ok(apiVersion, 200, docs);
@@ -40,7 +40,7 @@ function getRouter(){
                                 var amount= x1 + '.' + x[1];
                                 var item={
                                     "No": index,
-                                    "Unit":purchaseOrder._id,
+                                    "Unit":purchaseOrder._id.name,
                                     "Rp"    : amount,
                                     "%":((purchaseOrder.pricetotal/PriceTotals)*100).toFixed(2)
                                 }
