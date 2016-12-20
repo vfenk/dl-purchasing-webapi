@@ -39,7 +39,7 @@ function getRouter(){
                                 var amount= x1 + '.' + x[1];
                                 var item={
                                     "No": index,
-                                    "Divisi":purchaseOrder._id,
+                                    "Divisi":purchaseOrder._id.name,
                                     "Rp"    : amount,
                                     "%":((purchaseOrder.pricetotal/PriceTotals)*100).toFixed(2)
                                 }
