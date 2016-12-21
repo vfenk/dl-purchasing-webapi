@@ -38,7 +38,7 @@ function getRouter() {
                                     var productIdFulfillment = new ObjectId(fulfillment.product._id);
                                     if (productIdPoItem.equals(productIdFulfillment)) {
                                         for (var poItemFulfillment of poItem.fulfillments) {
-                                            sisa += poItemFulfillment.deliveryOderDeliveredQuantity;
+                                            sisa += poItemFulfillment.deliveryOrderDeliveredQuantity;
                                         }
                                         break;
                                     }
