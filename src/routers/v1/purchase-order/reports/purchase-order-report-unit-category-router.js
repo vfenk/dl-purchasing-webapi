@@ -13,7 +13,11 @@ function getRouter(){
                 var manager = new PurchaseOrderManager(db, request.user);
                 var sdate = request.params.dateFrom;
                 var edate = request.params.dateTo;
-                manager.getDataPOUnitCategory(sdate, edate)
+                var divisi = request.params.divisi;
+                var unit = request.params.unit;
+                var category = request.params.category;
+                var currency = request.params.currency;
+                manager.getDataPOUnitCategory(sdate, edate,divisi,unit,category,currency)
                     .then(docs => {
                         if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                             var result = resultFormatter.ok(apiVersion, 200, docs);
@@ -37,12 +41,19 @@ function getRouter(){
                                 var x= purchaseOrder.pricetotal.toFixed(2).toString().split('.');
                                 var x1=x[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                 var amount= x1 + '.' + x[1];
+
+                                var tx = purchaseOrder.pricePerCurrency.toFixed(2).toString().split('.');
+                                var tx1 = tx[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                var amountcurrency = tx1 + '.' + tx[1];
+
                                 var item={
                                     "No": index,
                                     "Divisi": purchaseOrder._id.division,
                                     "Unit":purchaseOrder._id.unit,
                                     "Kategori":purchaseOrder._id.category,
-                                    "Rp"    : amount,
+                                    "Mata Uang":purchaseOrder._id.currency,
+                                    "Harga per Mata Uang"    : amountcurrency,
+                                    "IDR"    : amount,
                                     "%":((purchaseOrder.pricetotal/PriceTotals)*100).toFixed(2)
                                 }
                                 data.push(item);
@@ -55,8 +66,8 @@ function getRouter(){
                             var y1=y[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                             var amounts= y1 + '.' + y[1];
                             var totals={
-                                "Kategori":"Total",
-                                "Rp": amounts,
+                                "Harga per Mata Uang":"Total",
+                                "IDR": amounts,
                                 "%": TotalPercentage
                             };
                             data.push(totals);
@@ -64,13 +75,20 @@ function getRouter(){
                                 "No": "number",
                                 "Divisi": "string",
                                 "Unit": "string",
-                                "Kategori": "string",
-                                "Rp": "number",
+                                "Kategori": "string","Mata Uang":"string",
+                                "Harga per Mata Uang"    : "number",
+                                "IDR": "number",
                                 "%": "number",
                             };
                             if(sdate!=undefined && edate!=undefined)
                             {
                                 response.xls(`Laporan Total Pembelian Per Unit Per Kategori ${moment(sdate).format(dateFormat)} - ${moment(edate).format(dateFormat)}.xlsx`, data, options);
+                            }  
+                            else if(!sdate && edate){
+                                response.xls(`Laporan Total Pembelian Per Unit Per Kategori sampai tanggal ${moment(edate).format(dateFormat)}.xlsx`, data, options);
+                            }
+                            else if(sdate && !edate){
+                                response.xls(`Laporan Total Pembelian Per Unit Per Kategori dari tanggal ${moment(sdate).format(dateFormat)}.xlsx`, data, options);
                             }
                             else
                             response.xls(`Laporan Total Pembelian Per Unit Per Kategori.xlsx`, data,options);
