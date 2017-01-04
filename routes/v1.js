@@ -79,7 +79,7 @@ var v1UnitPaymentOrderRouter = require('../src/routers/v1/unit-payment-note/unit
     v1UnitReceiptNoteMonitoringByUserRouter().applyRoutes(server,           "/v1/unit-receipt-notes/monitoring/by-user");
     v1UnitReceiptNoteMonitoringRouter().applyRoutes(server,                 "/v1/unit-receipt-notes/monitoring");
     v1UnitReceiptNoteByUserRouter().applyRoutes(server,                     "/v1/unit-receipt-notes/by-user");
-    v1UnitPaymentOrderSupplierRouter().applyRoutes(server,                  "/v1/unit-receipt-notes/by-suplier-unit");
+    v1UnitPaymentOrderSupplierRouter().applyRoutes(server,                  "/v1/unit-receipt-notes/by-supplier-unit");
     v1UnitReceiptNoteRouter().applyRoutes(server,                           "/v1/unit-receipt-notes");
     //UNIT PAYMENT NOTE
     v1UnitPaymentPriceCorrectionNoteByUserRouter().applyRoutes(server,      "/v1/unit-payment-orders/corrections/prices/by-user");  
