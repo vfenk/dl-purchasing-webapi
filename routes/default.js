@@ -3,7 +3,9 @@ var v1PurchaseRequestPostedRouter = require('../src/routers/v1/purchase-request/
 var v1PurchaseRequestPostRouter = require('../src/routers/v1/purchase-request/purchase-request-post-router');
 var v1PurchaseRequestByUserRouter = require('../src/routers/v1/purchase-request/purchase-request-by-user-router');
 var v1PurchaseRequestMonitoringRouter = require('../src/routers/v1/purchase-request/purchase-request-monitoring-router');
-var v1PurchaseRequestRouter = require('../src/routers/v1/purchase-request/purchase-request-router');
+var v1PurchaseRequestRouter = require('../src/routers/v1/purchase-request/purchase-request-router'); 
+var v1PurchaseRequestByRoleRouter = require('../src/routers/v1/purchase-request/purchase-request-by-role-router');
+var v1PurchaseRequestMonitoringAllUserRouter = require('../src/routers/v1/purchase-request/purchase-request-monitoring-all-user-router');
 // PURCHASE ORDER
 var v1PurchaseOrderSplitRouter = require('../src/routers/v1/purchase-order/purchase-order-split-router');
 var v1POMonitoringRouter = require('../src/routers/v1/purchase-order/purchase-order-monitoring-router');
@@ -50,7 +52,12 @@ var v1UnitPaymentOrderRouter = require('../src/routers/v1/unit-payment-note/unit
     v1PurchaseRequestPostRouter().applyRoutes(server,                       "/purchase-requests/post");
     v1PurchaseRequestByUserRouter().applyRoutes(server,                     "/purchase-requests/by-user");
     v1PurchaseRequestMonitoringRouter().applyRoutes(server,                 "/purchase-requests/monitoring");
-    v1PurchaseRequestRouter().applyRoutes(server,                           "/purchase-requests");
+    v1PurchaseRequestByRoleRouter().applyRoutes(server,                     "/purchase-requests/by-role");
+    v1PurchaseRequestMonitoringAllUserRouter().applyRoutes(server,          "/purchase-requests/monitoring-all-user");
+    v1PurchaseRequestByRoleRouter().applyRoutes(server,                     "/purchase-requests/by-role");
+    v1PurchaseRequestMonitoringAllUserRouter().applyRoutes(server,          "/purchase-requests/monitoring-all-user");
+    v1PurchaseRequestRouter().applyRoutes(server,                           "/purchase-requests"); 
+
     //PURCHASE ORDER
     v1PurchaseOrderSplitRouter().applyRoutes(server,                        "/purchase-orders/split");
     v1POMonitoringRouter().applyRoutes(server,                              "/purchase-orders/monitoring");
