@@ -84,8 +84,7 @@ function getRouter() {
         else {
             var user = request.user;
             var id = request.params.id;
-            var query = {
-                "_createdBy": request.user.username,
+            var query = { 
                 "_id": new ObjectId(id)
             };
             getManager(user)
