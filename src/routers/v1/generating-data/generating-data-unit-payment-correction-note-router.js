@@ -35,11 +35,11 @@ function getRouter() {
                         for (var item of _data.items) {
                             var unitReceiptNote = {};
                             for (var unitPaymentOrderItems of _data.unitPaymentOrder.items) {
-                                for (var unitReceiptnoteItem of unitPaymentOrderItems.uniReceiptNote.items) {
+                                for (var unitReceiptnoteItem of unitPaymentOrderItems.unitReceiptNote.items) {
                                     if (unitReceiptnoteItem.purchaseOrder._id.toString() === item.purchaseOrder._id.toString()) {
                                         unitReceiptNote = {
-                                            no: unitPaymentOrderItems.uniReceiptNote.no,
-                                            date: unitPaymentOrderItems.uniReceiptNote.date
+                                            no: unitPaymentOrderItems.unitReceiptNote.no,
+                                            date: unitPaymentOrderItems.unitReceiptNote.date
                                         };
                                         break;
                                     }
