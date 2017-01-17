@@ -72,7 +72,7 @@ function getRouter() {
                                 "JUMLAH BARANG": item.quantity,
                                 "SATUAN BARANG": item.uom.unit,
                                 "HARGA SATUAN BARANG": item.pricePerUnit,
-                                "MATA UANG": item.currency.name,
+                                "MATA UANG": item.currency.code,
                                 "RATE": item.currency.rate,
                                 "HARGA TOTAL BARANG": item.priceTotal,
                                 "NOMOR BON TERIMA UNIT": unitReceiptNote.no,
