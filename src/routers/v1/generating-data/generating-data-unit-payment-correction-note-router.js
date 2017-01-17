@@ -62,7 +62,7 @@ function getRouter() {
                                 "KODE SUPPLIER": _data.unitPaymentOrder.supplier.code,
                                 "NAMA SUPPLIER": _data.unitPaymentOrder.supplier.name,
                                 "ALAMAT SUPPLIER": _data.unitPaymentOrder.supplier.address,
-                                "NOMOR SURAT PENGANTAR": data.returNoteNo,
+                                "NOMOR SURAT PENGANTAR": _data.releaseOrderNoteNo,
                                 "KETERANGAN": _data.remark,
                                 "NOMOR PO EXTERNAL": item.purchaseOrder.purchaseOrderExternal.no,
                                 "NOMOR PURCHASE REQUEST": item.purchaseOrder.purchaseRequest.no,
