@@ -154,9 +154,9 @@ function getRouter() {
                         data.push(_item);
                     }
                     if (dateFrom && dateTo) {
-                        response.xls(`Laporan Nota Kredit -  ${moment(new Date(dateFrom)).format(dateFormat)} -  ${moment(new Date(dateTo)).format(dateFormat)}.xlsx`, data, options);
+                        response.xls(`Laporan Nota Kredit -  ${moment(new Date(dateFrom)).format("DD MMM YYYY")} -  ${moment(new Date(dateTo)).format("DD MMM YYYY")}.xlsx`, data, options);
                     } else {
-                        response.xls(`Laporan Nota Kredit -  ${moment(new Date()).format(dateFormat)}.xlsx`, data, options);
+                        response.xls(`Laporan Nota Kredit -  ${moment(new Date()).format("DD MMM YYYY")}.xlsx`, data, options);
                     }
                 })
                 .catch(e => {
