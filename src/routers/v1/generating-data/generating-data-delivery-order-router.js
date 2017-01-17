@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new DeliveryOrderManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -54,8 +54,8 @@ function getRouter() {
                     }
                     var options = {
                         "NOMOR SURAT JALAN": "string",
-                        "TANGGAL SURAT JALAN": "string",
-                        "TANGGAL DATANG BARANG": "string",
+                        "TANGGAL SURAT JALAN": "date",
+                        "TANGGAL DATANG BARANG": "date",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",
                         "NOMOR PO EXTERNAL": "string",

@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new PurchaseOrderExternalManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -56,7 +56,7 @@ function getRouter() {
                                     "SATUAN BARANG": item.dealUom.unit,
                                     "HARGA SATUAN BARANG": item.pricePerDealUnit,
                                     "HARGA TOTAL BARANG": item.pricePerDealUnit * item.dealQuantity,
-                                    "USER INPUT": "",
+                                    "USER INPUT": _data._createdBy,
                                     "STATUS POST": _data.isPosted ? "Sudah diposting" : "Belum diposting"
                                 }
                                 data.push(_item);
@@ -65,7 +65,7 @@ function getRouter() {
                     }
                     var options = {
                         "NOMOR PO EXTERNAL": "string",
-                        "TANGGAL PO EXTERNAL": "string",
+                        "TANGGAL PO EXTERNAL": "date",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",
                         "DELIVERY": "string",

@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new UnitPaymentOrderManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -46,19 +46,19 @@ function getRouter() {
                                     "TANGGAL NOTA KREDIT": moment(new Date(_data.date)).format(dateFormat),
                                     "KODE SUPPLIER": _data.supplier.code,
                                     "NAMA SUPPLIER": _data.supplier.name,
-                                    "KATEGORI": _data.supplier.name,
+                                    "KATEGORI": _data.category.name,
                                     "NOMOR INVOICE": _data.invoceNo,
                                     "TANGGAL INVOICE": moment(new Date(_data.invoceDate)).format(dateFormat),
                                     "TANGGAL JATUH TEMPO": moment(new Date(_data.dueDate)).format(dateFormat),
                                     "KETERANGAN": _data.remark,
                                     "PPN": _data.useIncomeTax ? "Ya" : "Tidak",
-                                    "NOMOR FAKTUR PAJAK": _data.incomeTaxNo,
-                                    "TANGGAL FAKTUR PAJAK": moment(new Date(_data.incomeTaxDate)).format(dateFormat),
+                                    "NOMOR FAKTUR PAJAK": _data.useIncomeTax ? _data.incomeTaxNo : "",
+                                    "TANGGAL FAKTUR PAJAK": _data.useIncomeTax ? moment(new Date(_data.incomeTaxDate)).format(dateFormat) : "",
                                     "PPH": _data.useVat ? "Ya" : "Tidak",
-                                    "JENIS PPH": _data.vat.name,
-                                    "% PPH": _data.vat.rate,
-                                    "NOMOR FAKTUR PPH": _data.vatNo,
-                                    "TANGGAL FAKTUR PPH": moment(new Date(_data.vatDate)).format(dateFormat),
+                                    "JENIS PPH": _data.useVat ? _data.vat.name : "",
+                                    "% PPH": _data.useVat ? _data.vat.rate : "",
+                                    "NOMOR FAKTUR PPH": _data.useVat ? _data.vatNo : "",
+                                    "TANGGAL FAKTUR PPH": _data.useVat ? moment(new Date(_data.vatDate)).format(dateFormat) : "",
                                     "NOMOR PO EXTERNAL": _unitReceiptNoteItem.purchaseOrder.purchaseOrderExternal.no,
                                     "NOMOR PURCHASE REQUEST": _unitReceiptNoteItem.purchaseOrder.purchaseRequest.no,
                                     "NOMOR ACCOUNT": "",
@@ -68,36 +68,36 @@ function getRouter() {
                                     "SATUAN BARANG": _unitReceiptNoteItem.deliveredUom.unit,
                                     "HARGA SATUAN BARANG": _unitReceiptNoteItem.pricePerDealUnit,
                                     "INCLUDED PPN (Y/N)": useIncomeTax ? "Ya" : "Tidak",
-                                    "MATA UANG": _unitReceiptNoteItem.currency.name,
+                                    "MATA UANG": _unitReceiptNoteItem.currency.code,
                                     "RATE": _unitReceiptNoteItem.currency.rate,
                                     "HARGA TOTAL BARANG": _unitReceiptNoteItem.pricePerDealUnit * _unitReceiptNoteItem.deliveredQuantity,
                                     "NOMOR BON TERIMA UNIT": _items.unitReceiptNote.no,
                                     "TANGGAL BON TERIMA UNIT": moment(new Date(_items.unitReceiptNote.date)).format(dateFormat),
                                     "PRINTED_FLAG": "",
-                                    "USER INPUT": ""
+                                    "USER INPUT": _data._createdBy
                                 }
+                                data.push(_item);
                             }
-                            data.push(_item);
                         }
                     }
                     var options = {
                         "NOMOR NOTA KREDIT": "string",
-                        "TANGGAL NOTA KREDIT": "string",
+                        "TANGGAL NOTA KREDIT": "date",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",
                         "KATEGORI": "string",
                         "NOMOR INVOICE": "string",
-                        "TANGGAL INVOICE    ": "string",
-                        "TANGGAL JATUH TEMPO": "string",
+                        "TANGGAL INVOICE    ": "date",
+                        "TANGGAL JATUH TEMPO": "date",
                         "KETERANGAN": "string",
                         "PPN": "string",
                         "NOMOR FAKTUR PAJAK": "string",
-                        "TANGGAL FAKTUR PAJAK": "string",
+                        "TANGGAL FAKTUR PAJAK": "date",
                         "PPH": "string",
                         "JENIS PPH": "string",
                         "% PPH": "string",
                         "NOMOR FAKTUR PPH": "string",
-                        "TANGGAL FAKTUR PPH": "string",
+                        "TANGGAL FAKTUR PPH": "date",
                         "NOMOR PO EXTERNAL": "string",
                         "NOMOR PURCHASE REQUEST": "string",
                         "NOMOR ACCOUNT": "string",
@@ -111,7 +111,7 @@ function getRouter() {
                         "RATE": "number",
                         "HARGA TOTAL BARANG": "number",
                         "NOMOR BON TERIMA UNIT": "string",
-                        "TANGGAL BON TERIMA UNIT": "string",
+                        "TANGGAL BON TERIMA UNIT": "date",
                         "PRINTED_FLAGT": "string",
                         "USER INPUT": ""
                     };
