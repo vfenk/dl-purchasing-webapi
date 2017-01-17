@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new UnitPaymentPriceCorrectionNoteManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -77,22 +77,22 @@ function getRouter() {
                                 "HARGA TOTAL BARANG": item.priceTotal,
                                 "NOMOR BON TERIMA UNIT": unitReceiptNote.no,
                                 "TANGGAL BON TERIMA UNIT": moment(new Date(unitReceiptNote.date)).format(dateFormat),
-                                "USER INPUT": ""
+                                "USER INPUT": _data._createdBy
                             }
                             data.push(_item);
                         }
                     }
                     var options = {
                         "NOMOR NOTA KOREKSI": "string",
-                        "TANGGAL NOTA KOREKSI": "string",
+                        "TANGGAL NOTA KOREKSI": "date",
                         "JENIS RETUR": "string",
                         "NOMOR NOTA KREDIT": "string",
                         "NOMOR INVOICE KOREKSI": "string",
-                        "TANGGAL INVOICE KOREKSI": "string",
+                        "TANGGAL INVOICE KOREKSI": "date",
                         "FAKTUR PAJAK KOREKSI PPN ": "string",
-                        "TANGGAL FAKTUR PAJAK KOREKSI PPN ": "string",
+                        "TANGGAL FAKTUR PAJAK KOREKSI PPN ": "date",
                         "FAKTUR PAJAK KOREKSI PPH": "string",
-                        "TANGGAL FAKTUR PAJAK KOREKSI PPH": "string",
+                        "TANGGAL FAKTUR PAJAK KOREKSI PPH": "date",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",
                         "ALAMAT SUPPLIER": "string",
@@ -110,7 +110,7 @@ function getRouter() {
                         "RATE": "number",
                         "HARGA TOTAL BARANG": "number",
                         "NOMOR BON TERIMA UNIT": "string",
-                        "TANGGAL BON TERIMA UNIT": "string",
+                        "TANGGAL BON TERIMA UNIT": "date",
                         "USER INPUT": ""
                     };
 

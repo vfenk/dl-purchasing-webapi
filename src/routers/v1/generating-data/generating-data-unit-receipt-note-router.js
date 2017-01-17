@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new UnitReceiptNoteManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -52,7 +52,7 @@ function getRouter() {
                     }
                     var options = {
                         "NOMOR BON TERIMA UNIT": "string",
-                        "TANGGAL BON TERIMA UNIT": "string",
+                        "TANGGAL BON TERIMA UNIT": "date",
                         "BAGIAN": "string",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",

@@ -12,7 +12,7 @@ function getRouter() {
         db.get().then(db => {
             var manager = new UnitPaymentOrderManager(db, request.user);
 
-            var dateFormat = "DD MMM YYYY";
+            var dateFormat = "DD/MM/YYYY";
             var locale = 'id-ID';
             var moment = require('moment');
             moment.locale(locale);
@@ -74,7 +74,7 @@ function getRouter() {
                                     "NOMOR BON TERIMA UNIT": _items.unitReceiptNote.no,
                                     "TANGGAL BON TERIMA UNIT": moment(new Date(_items.unitReceiptNote.date)).format(dateFormat),
                                     "PRINTED_FLAG": "",
-                                    "USER INPUT": ""
+                                    "USER INPUT": _data._createdBy
                                 }
                             }
                             data.push(_item);
@@ -82,22 +82,22 @@ function getRouter() {
                     }
                     var options = {
                         "NOMOR NOTA KREDIT": "string",
-                        "TANGGAL NOTA KREDIT": "string",
+                        "TANGGAL NOTA KREDIT": "date",
                         "KODE SUPPLIER": "string",
                         "NAMA SUPPLIER": "string",
                         "KATEGORI": "string",
                         "NOMOR INVOICE": "string",
-                        "TANGGAL INVOICE    ": "string",
-                        "TANGGAL JATUH TEMPO": "string",
+                        "TANGGAL INVOICE    ": "date",
+                        "TANGGAL JATUH TEMPO": "date",
                         "KETERANGAN": "string",
                         "PPN": "string",
                         "NOMOR FAKTUR PAJAK": "string",
-                        "TANGGAL FAKTUR PAJAK": "string",
+                        "TANGGAL FAKTUR PAJAK": "date",
                         "PPH": "string",
                         "JENIS PPH": "string",
                         "% PPH": "string",
                         "NOMOR FAKTUR PPH": "string",
-                        "TANGGAL FAKTUR PPH": "string",
+                        "TANGGAL FAKTUR PPH": "date",
                         "NOMOR PO EXTERNAL": "string",
                         "NOMOR PURCHASE REQUEST": "string",
                         "NOMOR ACCOUNT": "string",
@@ -111,7 +111,7 @@ function getRouter() {
                         "RATE": "number",
                         "HARGA TOTAL BARANG": "number",
                         "NOMOR BON TERIMA UNIT": "string",
-                        "TANGGAL BON TERIMA UNIT": "string",
+                        "TANGGAL BON TERIMA UNIT": "date",
                         "PRINTED_FLAGT": "string",
                         "USER INPUT": ""
                     };
