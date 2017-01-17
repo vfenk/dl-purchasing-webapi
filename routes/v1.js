@@ -45,9 +45,18 @@ var v1UnitPaymentQuantityCorrectionReturNoteRouter = require('../src/routers/v1/
 var v1UnitPaymentQuantityCorrectionNoteRouter = require('../src/routers/v1/unit-payment-note/unit-payment-quantity-correction-note-router');
 var v1UnitPaymentOrderByUserRouter = require('../src/routers/v1/unit-payment-note/unit-payment-order-by-user-router'); 
 var v1UnitPaymentOrderRouter = require('../src/routers/v1/unit-payment-note/unit-payment-order-router');
+// BUDGET DEAL
+var v1BudgetDealPurchaseRequest = require('../src/routers/v1/generating-data/generating-data-purchase-request-router');
+var v1BudgetDealPurchaseOrderExternal = require('../src/routers/v1/generating-data/generating-data-purchase-order-external-router');
+var v1BudgetDealDeliveryOrder = require('../src/routers/v1/generating-data/generating-data-delivery-order-router');
+var v1BudgetDealUnitReceiptNote = require('../src/routers/v1/generating-data/generating-data-unit-receipt-note-router');
+var v1BudgetDealUnitPaymentOrder = require('../src/routers/v1/generating-data/generating-data-unit-payment-order-router');
+var v1BudgetDealUnitPaymentCorrectionNote = require('../src/routers/v1/generating-data/generating-data-unit-payment-correction-note-router');
+//ETL
+var v1FactPembelianRouter = require('../src/routers/v1/etl/fact-pembelian-router');
 
  module.exports = function(server) {
-    //PURCHASE REQUEST
+    // PURCHASE REQUEST
     v1PurchaseRequestPostedRouter().applyRoutes(server,                     "/v1/purchase-requests/posted");
     v1PurchaseRequestPostRouter().applyRoutes(server,                       "/v1/purchase-requests/post");
     v1PurchaseRequestByUserRouter().applyRoutes(server,                     "/v1/purchase-requests/by-user");
@@ -95,4 +104,13 @@ var v1UnitPaymentOrderRouter = require('../src/routers/v1/unit-payment-note/unit
     v1UnitPaymentQuantityCorrectionNoteRouter().applyRoutes(server,         "/v1/unit-payment-orders/corrections/quantities");
     v1UnitPaymentOrderByUserRouter().applyRoutes(server,                    "/v1/unit-payment-orders/by-user");
     v1UnitPaymentOrderRouter().applyRoutes(server,                          "/v1/unit-payment-orders");
+    //BUDGET DEAL
+    v1BudgetDealPurchaseRequest().applyRoutes(server,                       "/v1/generating-data/purchase-request");
+    v1BudgetDealPurchaseOrderExternal().applyRoutes(server,                 "/v1/generating-data/purchase-order-external");
+    v1BudgetDealDeliveryOrder().applyRoutes(server,                         "/v1/generating-data/delivery-order");
+    v1BudgetDealUnitReceiptNote().applyRoutes(server,                       "/v1/generating-data/unit-receipt-note");
+    v1BudgetDealUnitPaymentOrder().applyRoutes(server,                      "/v1/generating-data/unit-payment-order");
+    v1BudgetDealUnitPaymentCorrectionNote().applyRoutes(server,             "/v1/generating-data/unit-payment-correction-note");
+    //ETL
+    v1FactPembelianRouter().applyRoutes(server,                             "/v1/fact-pembelian");
  };
