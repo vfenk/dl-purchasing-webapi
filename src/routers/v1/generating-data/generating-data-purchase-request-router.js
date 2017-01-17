@@ -45,9 +45,11 @@ function getRouter() {
                                 var poInternalDate = "";
                                 if (purchaseRequest.isUsed) {
                                     for (var poInternal of poInternals) {
-                                        if (purchaseRequest._id.toString() === poInternal.purchaseRequest._id.toString()) {
-                                            poInternalDate = moment(new Date(poInternal._createdDate)).format(dateFormat);
-                                            break;
+                                        if (purchaseRequest._id && poInternal.purchaseRequest) {
+                                            if (purchaseRequest._id.toString() === poInternal.purchaseRequest._id.toString()) {
+                                                poInternalDate = moment(new Date(poInternal._createdDate)).format(dateFormat);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
