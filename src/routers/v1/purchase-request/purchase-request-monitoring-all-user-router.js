@@ -40,7 +40,7 @@ function getRouter() {
                                 var status = purchaseRequest.status ? purchaseRequest.status.label : "-";
 
                                 if (purchaseRequest.status.value === 4 || purchaseRequest.status.value === 9) {
-                                    status = `${status} (${item.deliveryOrderNos.join(", ")})`;
+                                    status = item.deliveryOrderNos.length > 0 ? `${status} (${item.deliveryOrderNos.join(", ")})` : status;
                                 }
                                 var _item = {
                                     "No": index,
