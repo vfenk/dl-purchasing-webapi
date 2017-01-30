@@ -17,7 +17,7 @@ function getRouter() {
             var query = request.queryInfo;
             var filter = {
                 "_deleted": false,
-                "isPaid": false,
+                // "isPaid": false,
                 "supplierId": new ObjectId(query.filter.supplierId),
                 "unit.divisionId": new ObjectId(query.filter.divisionId),
                 "items": {
