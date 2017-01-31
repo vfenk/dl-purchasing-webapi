@@ -25,7 +25,8 @@ function getRouter(){
             manager.getDataPOMonitoringPembelian(unitId, categoryId, PODLNo, PRNo, supplierId, dateFrom, dateTo, state)
                 .then(docs => {
 
-                    var dateFormat = "DD MMM YYYY";
+                    var dateFormat = "DD/MM/YYYY";
+                    var dateFormat2 = "DD MMM YYYY";
                     var locale = 'id-ID';
                     var moment = require('moment');
                     moment.locale(locale);
@@ -196,7 +197,7 @@ function getRouter(){
                         };
 
 
-                        response.xls(`Laporan Monitoring Pembelian - ${moment(new Date()).format(dateFormat)}.xlsx`, data, options);
+                        response.xls(`Laporan Monitoring Pembelian - ${moment(new Date()).format(dateFormat2)}.xlsx`, data, options);
                     }
                 })
                 .catch(e => {
