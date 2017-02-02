@@ -43,7 +43,7 @@ function getRouter() {
         defaultOrder: {
             "_updatedDate": -1
         },
-        defaultSelect:[ "no", "date", "supplier.name", "items", "isPosted"]
+        defaultSelect:[ "no", "date", "supplier.name", "items.purchaseRequest.no", "isPosted","status",]
     });
 
     var route = router.routes["get"].find(route => route.options.path === "/:id");

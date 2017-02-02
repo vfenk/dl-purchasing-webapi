@@ -42,7 +42,10 @@ function getRouter() {
         version: apiVersion,
         defaultOrder: {
             "_updatedDate": -1
-        }
+        },
+        defaultSelect: [
+            "no", "date", "supplier.name", "division.name", "items.unitReceiptNote.no", "items.unitReceiptNote.deliveryOrder.no"
+        ]
     });
 
     var route = router.routes["get"].find(route => route.options.path === "/:id");
