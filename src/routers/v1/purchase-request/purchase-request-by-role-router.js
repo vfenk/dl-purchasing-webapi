@@ -1,17 +1,17 @@
 var Router = require('restify-router').Router;
 var db = require("../../../db");
-var UnitReceiptNoteManager = require("dl-module").managers.purchasing.UnitReceiptNoteManager;
+var PurchaseRequestManager = require("dl-module").managers.purchasing.PurchaseRequestManager;
 var resultFormatter = require("../../../result-formatter");
 var ObjectId = require("mongodb").ObjectId;
-const apiVersion = '1.0.0';
 var passport = require('../../../passports/jwt-passport');
+const apiVersion = '1.0.0';
 
 function getRouter() {
     var router = new Router();
     var getManager = (user) => {
         return db.get()
             .then((db) => {
-                return Promise.resolve(new UnitReceiptNoteManager(db, user));
+                return Promise.resolve(new PurchaseRequestManager(db, user));
             });
     };
 
@@ -22,11 +22,11 @@ function getRouter() {
             "_updatedDate": -1
         };
         var filter = {
-            "_createdBy": request.user.username
+            "unit.name": { $in: ["PEMBELIAN A", "PEMBELIAN C", "PEMBELIAN D", "PEMBELIAN E", "PEMBELIAN F"] }
         };
         Object.assign(query.filter, filter);
         query.select = [
-            "unit.division.name", "unit.name", , "no", "date", "supplier.name", "deliveryOrder.no"
+            "unit.division.name", "unit.name", "category.name", "date", "no", "expectedDeliveryDate", "_createdBy", "isPosted"
         ];
 
         getManager(user)
@@ -86,7 +86,6 @@ function getRouter() {
             var user = request.user;
             var id = request.params.id;
             var query = {
-                "_createdBy": request.user.username,
                 "_id": new ObjectId(id)
             };
             getManager(user)

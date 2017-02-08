@@ -6,7 +6,7 @@ var ObjectId = require("mongodb").ObjectId;
 const apiVersion = '1.0.0';
 var passport = require('../../../passports/jwt-passport');
 
-function getRouter(){
+function getRouter() {
     var router = new Router();
     var getManager = (user) => {
         return db.get()
@@ -21,10 +21,13 @@ function getRouter(){
         query.order = {
             "_updatedDate": -1
         };
-        query.filter = {
+        var filter = {
             "_createdBy": request.user.username
         };
-
+        Object.assign(query.filter, filter);
+        query.select = [
+            "no", "date", "supplier.name", "division.name", "items.unitReceiptNote.no", "items.unitReceiptNote.deliveryOrder.no"
+        ];
         getManager(user)
             .then((manager) => {
                 return manager.read(query);
