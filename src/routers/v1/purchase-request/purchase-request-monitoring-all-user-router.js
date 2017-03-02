@@ -19,9 +19,8 @@ function getRouter() {
             var dateFrom = request.params.dateFrom;
             var dateTo = request.params.dateTo;
             var state = parseInt(request.params.state);
-            var createdBy = request.user.username;
 
-            manager.getDataPRMonitoring(unitId, categoryId, budgetId, PRNo, dateFrom, dateTo, state, createdBy)
+            manager.getDataPRMonitoringAllUser(unitId, categoryId, budgetId, PRNo, dateFrom, dateTo, state)
                 .then(docs => {
                     if ((request.headers.accept || '').toString().indexOf("application/xls") < 0) {
                         var result = resultFormatter.ok(apiVersion, 200, docs);
@@ -29,7 +28,7 @@ function getRouter() {
                     } else {
 
                         var dateFormat = "DD/MM/YYYY";
-                        var dateFormat2 = "DD MMMM YYYY";
+                        var dateFormat = "DD MMMM YYYY";
                         var locale = 'id-ID';
                         var moment = require('moment');
                         moment.locale(locale);

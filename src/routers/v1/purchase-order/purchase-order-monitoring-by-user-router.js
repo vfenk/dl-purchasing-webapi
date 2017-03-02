@@ -21,8 +21,9 @@ function getRouter() {
             var dateFrom = request.params.dateFrom;
             var dateTo = request.params.dateTo;
             var state = parseInt(request.params.state);
+            var createdBy = request.user.username;
 
-            manager.getDataPOMonitoringPembelian(unitId, categoryId, PODLNo, PRNo, supplierId, dateFrom, dateTo, state)
+            manager.getDataPOMonitoringPembelian(unitId, categoryId, PODLNo, PRNo, supplierId, dateFrom, dateTo, state, createdBy)
                 .then(docs => {
 
                     var dateFormat = "DD/MM/YYYY";
@@ -130,8 +131,8 @@ function getRouter() {
                                     "No Bon Terima Unit": "-",
                                     "Jumlah Diminta": 0,
                                     "Satuan Diminta": "-",
-                                    "Tempo Pembayaran": PO.paymentDueDays,
                                     "Tanggal Invoice": "-",
+                                    "Tempo Pembayaran": PO.paymentDueDays,
                                     "No Invoice": "-",
                                     "Tanggal Nota Intern": "-",
                                     "No Nota Intern": "-",
