@@ -10,7 +10,6 @@ function getJWTRouter(ManagerType, opts) {
     };
 
     var apiVersion = options.version || "1.0.0";
-    var defaultSelect = options.defaultSelect || [];
     var defaultOrder = options.defaultOrder || {};
 
     var getManager = (user) => {
@@ -25,9 +24,8 @@ function getJWTRouter(ManagerType, opts) {
     router.get("/", passport, function(request, response, next) {
         var user = request.user;
         var query = request.query;
-        query.order = Object.assign({}, defaultOrder, query.order);
-        query.select = query.select || defaultSelect;
-        
+        query.order = Object.assign({}, query.order, defaultOrder, query.order);
+
         getManager(user)
             .then((manager) => {
                 return manager.read(query);
